@@ -1,12 +1,16 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
+
+	"github.com/zetamatta/experimental/writeconsole"
 )
 
 func wait(keyword string, ch chan []byte) bool {
@@ -17,7 +21,7 @@ func wait(keyword string, ch chan []byte) bool {
 		if !ok {
 			return false
 		}
-		fmt.Print(string(text))
+		fmt.Printf("<" + string(text) + ">")
 		alltext = append(alltext, text...)
 		if bytes.Index(alltext, keywordByte) >= 0 {
 			return true
@@ -26,6 +30,11 @@ func wait(keyword string, ch chan []byte) bool {
 }
 
 func waitAndTell(args []string, keywords []string) error {
+	console, err := writeconsole.NewHandle()
+	if err != nil {
+		return err
+	}
+
 	cmd := exec.Command(args[0], args[1:]...)
 	in1, err := cmd.StdoutPipe()
 	if err != nil {
@@ -37,6 +46,8 @@ func waitAndTell(args []string, keywords []string) error {
 		defer in1.Close()
 		return err
 	}
+
+	cmd.Stdin = os.Stdin
 
 	ch := make(chan []byte, 10)
 	go func() {
@@ -61,11 +72,6 @@ func waitAndTell(args []string, keywords []string) error {
 			ch <- data[:n]
 		}
 	}()
-	out, err := cmd.StdinPipe()
-	if err != nil {
-		return err
-	}
-	defer out.Close()
 	if err := cmd.Start(); err != nil {
 		return err
 	}
@@ -79,8 +85,8 @@ func waitAndTell(args []string, keywords []string) error {
 		if i >= len(keywords) {
 			break
 		}
-		fmt.Fprintf(out, "%s\r\n", keywords[i])
-		fmt.Println(keywords[i])
+		console.WriteString(keywords[i])
+		console.WriteRune('\r')
 		i++
 	}
 	cmd.Wait()
@@ -88,12 +94,19 @@ func waitAndTell(args []string, keywords []string) error {
 }
 
 func Main() error {
-	keywords := make([]string, 100)
-	scnr := bufio.NewScanner(os.Stdin)
-	for scnr.Scan() {
-		keywords = append(keywords, scnr.Text())
+	if len(os.Args) < 3 {
+		return errors.New("too few arguments")
 	}
-	return waitAndTell(os.Args[1:], keywords)
+	keywords_bin, err := ioutil.ReadFile(os.Args[1])
+	if err != nil {
+		return err
+	}
+	keywords := strings.Split(string(keywords_bin), "\n")
+	for i := 0 ; i < len(keywords) ; i ++ {
+		keywords[i] = strings.TrimSpace(keywords[i])
+		println("keyword='" + keywords[i] + "'")
+	}
+	return waitAndTell(os.Args[2:], keywords)
 }
 
 func main() {
