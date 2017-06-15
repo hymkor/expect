@@ -2,7 +2,7 @@ Expect for Windows Command Prompt Powered by GopherLua
 =======================================================
 
 - A tool like `expect` on Linux.
-- Scripts are to be written with Lua (GopherLua)
+- Scripts are to be written with Lua ([GopherLua](https://github.com/yuin/gopher-lua))
 - Some built-in functions exists:
     - `expect()` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
     - `send()` occurs keyboard events against CONIN$.
