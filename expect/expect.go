@@ -1,112 +1,108 @@
 package main
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
-	"github.com/zetamatta/experimental/writeconsole"
+	"github.com/yuin/gopher-lua"
+	"github.com/zetamatta/go-getch/consoleinput"
+	"github.com/zetamatta/go-getch/consoleoutput"
+	"github.com/zetamatta/go-getch/typekeyas"
 )
 
-func wait(keyword string, ch chan []byte) bool {
-	keywordByte := []byte(keyword)
-	alltext := make([]byte, 0, 4096)
-	for {
-		text, ok := <-ch
-		if !ok {
-			return false
-		}
-		fmt.Printf("<" + string(text) + ">")
-		alltext = append(alltext, text...)
-		if bytes.Index(alltext, keywordByte) >= 0 {
-			return true
-		}
-	}
+var conIn consoleinput.Handle
+
+func Send(L *lua.LState) int {
+	str := L.ToString(1)
+	typekeyas.String(conIn, str)
+	L.Push(lua.LTrue)
+	return 1
 }
 
-func waitAndTell(args []string, keywords []string) error {
-	console, err := writeconsole.NewHandle()
-	if err != nil {
-		return err
-	}
+var conOut consoleoutput.Handle
 
-	cmd := exec.Command(args[0], args[1:]...)
-	in1, err := cmd.StdoutPipe()
-	if err != nil {
-		return err
-	}
-
-	in2, err := cmd.StderrPipe()
-	if err != nil {
-		defer in1.Close()
-		return err
-	}
-
-	cmd.Stdin = os.Stdin
-
-	ch := make(chan []byte, 10)
-	go func() {
-		var data [256]byte
-		for {
-			n, err := in1.Read(data[:])
-			if err != nil {
-				in1.Close()
-				return
-			}
-			ch <- data[:n]
+func Expect(L *lua.LState) int {
+	str := L.ToString(1)
+	for {
+		output, err := conOut.GetRecentOutput()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			L.Push(lua.LFalse)
+			return 1
 		}
-	}()
-	go func() {
-		var data [256]byte
-		for {
-			n, err := in2.Read(data[:])
-			if err != nil {
-				in2.Close()
-				return
-			}
-			ch <- data[:n]
-		}
-	}()
-	if err := cmd.Start(); err != nil {
-		return err
-	}
-	i := 0
-	for i < len(keywords) {
-		if !wait(keywords[i], ch) {
-			fmt.Fprintln(os.Stderr, "Found EOF")
-			return io.EOF
-		}
-		i++
-		if i >= len(keywords) {
+		if strings.Index(output, str) >= 0 {
 			break
 		}
-		console.WriteString(keywords[i])
-		console.WriteRune('\r')
-		i++
+		time.Sleep(time.Second / time.Duration(10))
 	}
-	cmd.Wait()
-	return nil
+	L.Push(lua.LTrue)
+	return 1
+}
+
+var waitProcess = []*exec.Cmd{}
+
+func Spawn(L *lua.LState) int {
+	n := L.GetTop()
+	if n < 1 {
+		L.Push(lua.LFalse)
+		return 1
+	}
+	args := make([]string, n)
+	for i := 0; i < n; i++ {
+		args[i] = L.CheckString(1 + i)
+	}
+	var cmd *exec.Cmd
+	if len(args) <= 1 {
+		cmd = exec.Command(args[0])
+	} else {
+		cmd = exec.Command(args[0], args[1:]...)
+	}
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Start(); err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		L.Push(lua.LFalse)
+		return 1
+	}
+	waitProcess = append(waitProcess, cmd)
+	L.Push(lua.LTrue)
+	return 1
 }
 
 func Main() error {
-	if len(os.Args) < 3 {
-		return errors.New("too few arguments")
+	if len(os.Args) < 2 {
+		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
 	}
-	keywords_bin, err := ioutil.ReadFile(os.Args[1])
+	var err error
+	conIn, err = consoleinput.New()
 	if err != nil {
 		return err
 	}
-	keywords := strings.Split(string(keywords_bin), "\n")
-	for i := 0 ; i < len(keywords) ; i ++ {
-		keywords[i] = strings.TrimSpace(keywords[i])
-		println("keyword='" + keywords[i] + "'")
+	defer conIn.Close()
+
+	conOut, err = consoleoutput.New()
+	if err != nil {
+		return err
 	}
-	return waitAndTell(os.Args[2:], keywords)
+	defer conOut.Close()
+
+	L := lua.NewState()
+	defer L.Close()
+
+	L.SetGlobal("send", L.NewFunction(Send))
+	L.SetGlobal("expect", L.NewFunction(Expect))
+	L.SetGlobal("spawn", L.NewFunction(Spawn))
+
+	err = L.DoFile(os.Args[1])
+
+	for _, c := range waitProcess {
+		c.Wait()
+	}
+	return err
 }
 
 func main() {
