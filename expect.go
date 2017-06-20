@@ -73,10 +73,6 @@ func Spawn(L *lua.LState) int {
 	return 1
 }
 
-func Rem(L *lua.LState) int {
-	return 0
-}
-
 func Main() error {
 	if len(os.Args) < 2 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
@@ -100,7 +96,6 @@ func Main() error {
 	L.SetGlobal("send", L.NewFunction(Send))
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
-	L.SetGlobal("rem", L.NewFunction(Rem))
 
 	err = L.DoFile(os.Args[1])
 
