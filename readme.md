@@ -7,6 +7,7 @@ Expect for Windows Command Prompt Powered by GopherLua
     - `expect()` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
     - `send()` occurs keyboard events against CONIN$.
     - `spawn()` starts applications and returns true on success or false on failure.
+    - `rem()` is for a comment which used on the shebang-line of a batch file.
 
 Sample
 ------
