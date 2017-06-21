@@ -15,45 +15,44 @@ import (
 
 var conIn consoleinput.Handle
 
-func Send(L *lua.LState) int {
-	str := L.ToString(1)
+func send(str string) {
 	typekeyas.String(conIn, str)
+}
+
+func Send(L *lua.LState) int {
+	send(L.ToString(1))
 	L.Push(lua.LTrue)
 	return 1
 }
 
 var conOut consoleoutput.Handle
 
-func Expect(L *lua.LState) int {
-	str := L.ToString(1)
+func expect(str string) bool {
 	for {
 		output, err := conOut.GetRecentOutput()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
-			L.Push(lua.LFalse)
-			return 1
+			return false
 		}
 		if strings.Index(output, str) >= 0 {
-			break
+			return true
 		}
 		time.Sleep(time.Second / time.Duration(10))
 	}
-	L.Push(lua.LTrue)
+}
+
+func Expect(L *lua.LState) int {
+	if expect(L.ToString(1)) {
+		L.Push(lua.LTrue)
+	} else {
+		L.Push(lua.LFalse)
+	}
 	return 1
 }
 
 var waitProcess = []*exec.Cmd{}
 
-func Spawn(L *lua.LState) int {
-	n := L.GetTop()
-	if n < 1 {
-		L.Push(lua.LFalse)
-		return 1
-	}
-	args := make([]string, n)
-	for i := 0; i < n; i++ {
-		args[i] = L.CheckString(1 + i)
-	}
+func spawn(args []string) bool {
 	var cmd *exec.Cmd
 	if len(args) <= 1 {
 		cmd = exec.Command(args[0])
@@ -65,11 +64,28 @@ func Spawn(L *lua.LState) int {
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
+		return false
+	} else {
+		waitProcess = append(waitProcess, cmd)
+		return true
+	}
+}
+
+func Spawn(L *lua.LState) int {
+	n := L.GetTop()
+	if n < 1 {
 		L.Push(lua.LFalse)
 		return 1
 	}
-	waitProcess = append(waitProcess, cmd)
-	L.Push(lua.LTrue)
+	args := make([]string, n)
+	for i := 0; i < n; i++ {
+		args[i] = L.CheckString(1 + i)
+	}
+	if spawn(args) {
+		L.Push(lua.LTrue)
+	} else {
+		L.Push(lua.LFalse)
+	}
 	return 1
 }
 
