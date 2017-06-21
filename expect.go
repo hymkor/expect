@@ -2,11 +2,15 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
 
+	anko_core "github.com/mattn/anko/builtins"
+	"github.com/mattn/anko/vm"
+	"github.com/mattn/anko/parser"
 	"github.com/yuin/gopher-lua"
 	"github.com/zetamatta/go-getch/consoleinput"
 	"github.com/zetamatta/go-getch/consoleoutput"
@@ -106,14 +110,34 @@ func Main() error {
 	}
 	defer conOut.Close()
 
-	L := lua.NewState()
-	defer L.Close()
+	if strings.HasSuffix(strings.ToLower(os.Args[1]), ".ank") {
+		env := vm.NewEnv()
 
-	L.SetGlobal("send", L.NewFunction(Send))
-	L.SetGlobal("expect", L.NewFunction(Expect))
-	L.SetGlobal("spawn", L.NewFunction(Spawn))
+		anko_core.LoadAllBuiltins(env)
 
-	err = L.DoFile(os.Args[1])
+		env.Define("send", func(s string)int{send(s);return 0})
+		env.Define("expect", func(s string)int{if expect(s) { return 1; } else{ return 0 }})
+		env.Define("spawn", func(ss []string)int{if spawn(ss){ return 1; } else{ return 0 }})
+		println("!")
+
+		b, err := ioutil.ReadFile(os.Args[1])
+		if err != nil {
+			return err
+		}
+		println("!!")
+		parser.EnableErrorVerbose()
+		_, err = env.Execute(string(b))
+		println("!!!")
+	} else {
+		L := lua.NewState()
+		defer L.Close()
+
+		L.SetGlobal("send", L.NewFunction(Send))
+		L.SetGlobal("expect", L.NewFunction(Expect))
+		L.SetGlobal("spawn", L.NewFunction(Spawn))
+
+		err = L.DoFile(os.Args[1])
+	}
 
 	for _, c := range waitProcess {
 		c.Wait()
