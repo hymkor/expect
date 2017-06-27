@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
 	"time"
 
+	"github.com/mattn/go-colorable"
 	"github.com/yuin/gopher-lua"
 	"github.com/zetamatta/go-getch/consoleinput"
 	"github.com/zetamatta/go-getch/consoleoutput"
@@ -15,26 +18,29 @@ import (
 
 var conIn consoleinput.Handle
 
-var echoOn = false
+var output = colorable.NewColorableStdout()
+var echo io.Writer = ioutil.Discard
+
+const ECHO = "\x1B[40;31;1m"
+const SEND = "\x1B[40;35;1m"
+const SPAWN = "\x1B[40;32;1m"
+const END = "\x1B[37;1m"
 
 func Echo(L *lua.LState) int {
 	value := L.Get(-1)
 	if value == lua.LTrue {
-		echoOn = true
+		echo = output
 	} else if lua.LVIsFalse(value) {
-		echoOn = false
+		echo = ioutil.Discard
 	} else {
-		fmt.Println(value.String())
+		fmt.Fprintf(output, "%s%s%s\n", ECHO, value.String(), END)
 	}
 	L.Push(lua.LTrue)
 	return 1
 }
 
 func send(str string) {
-	if echoOn {
-		str_ := strings.Replace(str, "\r", "\n", -1)
-		fmt.Print(str_)
-	}
+	fmt.Fprintf(echo, "%s%s%s", SEND, strings.Replace(str, "\r", "\n", -1), END)
 	typekeyas.String(conIn, str)
 }
 
@@ -76,12 +82,10 @@ var waitProcess = []*exec.Cmd{}
 
 func spawn(args []string) bool {
 	var cmd *exec.Cmd
-	if echoOn {
-		for _, s := range args {
-			fmt.Printf("\"%s\" ", s)
-		}
-		fmt.Println()
+	for _, s := range args {
+		fmt.Fprintf(echo, "%s\"%s\"%s ", SPAWN, s, END)
 	}
+	fmt.Fprintln(echo)
 	if len(args) <= 1 {
 		cmd = exec.Command(args[0])
 	} else {
