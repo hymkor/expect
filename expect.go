@@ -15,7 +15,26 @@ import (
 
 var conIn consoleinput.Handle
 
+var echoOn = false
+
+func Echo(L *lua.LState) int {
+	value := L.Get(-1)
+	if value == lua.LTrue {
+		echoOn = true
+	} else if lua.LVIsFalse(value) {
+		echoOn = false
+	} else {
+		fmt.Println(value.String())
+	}
+	L.Push(lua.LTrue)
+	return 1
+}
+
 func send(str string) {
+	if echoOn {
+		str_ := strings.Replace(str, "\r", "\n", -1)
+		fmt.Print(str_)
+	}
 	typekeyas.String(conIn, str)
 }
 
@@ -54,6 +73,12 @@ var waitProcess = []*exec.Cmd{}
 
 func spawn(args []string) bool {
 	var cmd *exec.Cmd
+	if echoOn {
+		for _, s := range args {
+			fmt.Printf("\"%s\" ", s)
+		}
+		fmt.Println()
+	}
 	if len(args) <= 1 {
 		cmd = exec.Command(args[0])
 	} else {
@@ -109,6 +134,7 @@ func Main() error {
 	L := lua.NewState()
 	defer L.Close()
 
+	L.SetGlobal("echo", L.NewFunction(Echo))
 	L.SetGlobal("send", L.NewFunction(Send))
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
