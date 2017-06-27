@@ -4,7 +4,12 @@ Expect for Windows Command Prompt Powered by GopherLua
 - A tool like `expect` on Linux.
 - Scripts are to be written with Lua ([GopherLua](https://github.com/yuin/gopher-lua))
 - Some built-in functions exists:
-    - `expect()` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
+    - `rc=expect(A,B,C...)` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
+        - When A was found in cursor-line, rc=0
+        - When B was found in cursor-line, rc=1
+        - When C was found in cursor-line, rc=2
+        - :
+        - When error occured, rc=-1
     - `send()` occurs keyboard events against CONIN$.
     - `spawn()` starts applications and returns true on success or false on failure.
     - `echo()` controls echoback
