@@ -7,6 +7,10 @@ Expect for Windows Command Prompt Powered by GopherLua
     - `expect()` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
     - `send()` occurs keyboard events against CONIN$.
     - `spawn()` starts applications and returns true on success or false on failure.
+    - `echo()` controls echoback
+        - `echo(true)`: echo on
+        - `echo(false)`: echo off
+        - `echo("...")`: print a string
 
 Sample
 ------
@@ -14,10 +18,13 @@ Sample
 sample.lua:
 
 ```sample.lua
+echo(true)
 if spawn([[c:\Program Files\Git\usr\bin\ssh.exe]],"foo@example.com") then
     expect("password:")
+    echo(false)
     send("PASSWORD\r")
     expect("~]$")
+    echo(true)
     send("exit\r")
 end
 ```
