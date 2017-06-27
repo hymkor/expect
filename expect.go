@@ -46,26 +46,29 @@ func Send(L *lua.LState) int {
 
 var conOut consoleoutput.Handle
 
-func expect(str string) bool {
+func expect(keywords []string) int {
 	for {
 		output, err := conOut.GetRecentOutput()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
-			return false
+			return -1
 		}
-		if strings.Index(output, str) >= 0 {
-			return true
+		for i, str := range keywords {
+			if strings.Index(output, str) >= 0 {
+				return i
+			}
 		}
 		time.Sleep(time.Second / time.Duration(10))
 	}
 }
 
 func Expect(L *lua.LState) int {
-	if expect(L.ToString(1)) {
-		L.Push(lua.LTrue)
-	} else {
-		L.Push(lua.LFalse)
+	n := L.GetTop()
+	keywords := make([]string, n)
+	for i := 1; i <= n; i++ {
+		keywords[i-1] = L.ToString(i)
 	}
+	L.Push(lua.LNumber(expect(keywords)))
 	return 1
 }
 
