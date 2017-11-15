@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -15,6 +16,8 @@ import (
 	"github.com/zetamatta/go-getch/consoleoutput"
 	"github.com/zetamatta/go-getch/typekeyas"
 )
+
+var eOption = flag.String("e", "", "execute string")
 
 var conIn consoleinput.Handle
 
@@ -122,9 +125,12 @@ func Spawn(L *lua.LState) int {
 }
 
 func Main() error {
-	if len(os.Args) < 2 {
+	flag.Parse()
+
+	if *eOption == "" && len(flag.Args()) < 1 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
 	}
+
 	var err error
 	conIn, err = consoleinput.New()
 	if err != nil {
@@ -146,7 +152,11 @@ func Main() error {
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
 
-	err = L.DoFile(os.Args[1])
+	if *eOption != "" {
+		err = L.DoString(*eOption)
+	} else {
+		err = L.DoFile(flag.Arg(0))
+	}
 
 	for _, c := range waitProcess {
 		c.Wait()
