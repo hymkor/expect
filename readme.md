@@ -48,3 +48,23 @@ Welcome to FreeBSD!
 logout
 Connection to example.com closed.
 ```
+
+The script embeded in the batchfile:
+
+```sample.cmd
+@expect.exe -x "%~f0"
+@exit /b
+
+-- `-x` option lets Lua ignore lines starting with '@'
+-- to embed the script into the batchfile.
+
+echo(true)
+if spawn([[c:\Program Files\Git\usr\bin\ssh.exe]],"foo@example.com") then
+    expect("password:")
+    echo(false)
+    send("PASSWORD\r")
+    expect("~]$")
+    echo(true)
+    send("exit\r")
+end
+```
