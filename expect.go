@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io"
@@ -18,6 +19,7 @@ import (
 )
 
 var eOption = flag.String("e", "", "execute string")
+var xOption = flag.String("x", "", "execute file except for lines startings with '@'")
 
 var conIn consoleinput.Handle
 
@@ -124,10 +126,37 @@ func Spawn(L *lua.LState) int {
 	return 1
 }
 
+func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
+	fd, err := os.Open(fname)
+	if err != nil {
+		return err
+	}
+	reader, writer := io.Pipe()
+	go func() {
+		scan := bufio.NewScanner(fd)
+		for scan.Scan() {
+			line := scan.Text()
+			if len(line) > 0 && line[0] == '@' {
+				line = ""
+			}
+			fmt.Fprintln(writer, line)
+		}
+		writer.Close()
+		fd.Close()
+	}()
+	f, err := L.Load(reader, fname)
+	reader.Close()
+	if err != nil {
+		return err
+	}
+	L.Push(f)
+	return L.PCall(0, 0, nil)
+}
+
 func Main() error {
 	flag.Parse()
 
-	if *eOption == "" && len(flag.Args()) < 1 {
+	if *eOption == "" && *xOption == "" && len(flag.Args()) < 1 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
 	}
 
@@ -154,6 +183,8 @@ func Main() error {
 
 	if *eOption != "" {
 		err = L.DoString(*eOption)
+	} else if *xOption != "" {
+		err = DoFileExceptForAtmarkLines(L, *xOption)
 	} else {
 		err = L.DoFile(flag.Arg(0))
 	}
