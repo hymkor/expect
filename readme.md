@@ -1,4 +1,6 @@
-Expect for Windows Command Prompt Powered by GopherLua
+[![Go Report Card](https://goreportcard.com/badge/github.com/zetamatta/expect)](https://goreportcard.com/report/github.com/zetamatta/expect)
+
+Expect for Windows Powered by GopherLua
 =======================================================
 
 - A tool like `expect` on Linux.
