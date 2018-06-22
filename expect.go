@@ -24,13 +24,14 @@ var xOption = flag.String("x", "", "execute file except for lines startings with
 var conIn consoleinput.Handle
 
 var output = colorable.NewColorableStdout()
-var echo io.Writer = ioutil.Discard
+var echo = ioutil.Discard
 
-const ECHO = "\x1B[40;31;1m"
-const SEND = "\x1B[40;35;1m"
-const SPAWN = "\x1B[40;32;1m"
-const END = "\x1B[37;1m"
+const escEcho = "\x1B[40;31;1m"
+const escSend = "\x1B[40;35;1m"
+const escSpawn = "\x1B[40;32;1m"
+const escEnd = "\x1B[37;1m"
 
+// Echo is the implement of the lua-function `echo`
 func Echo(L *lua.LState) int {
 	value := L.Get(-1)
 	if value == lua.LTrue {
@@ -38,17 +39,18 @@ func Echo(L *lua.LState) int {
 	} else if lua.LVIsFalse(value) {
 		echo = ioutil.Discard
 	} else {
-		fmt.Fprintf(output, "%s%s%s\n", ECHO, value.String(), END)
+		fmt.Fprintf(output, "%s%s%s\n", escEcho, value.String(), escEnd)
 	}
 	L.Push(lua.LTrue)
 	return 1
 }
 
 func send(str string) {
-	fmt.Fprintf(echo, "%s%s%s", SEND, strings.Replace(str, "\r", "\n", -1), END)
+	fmt.Fprintf(echo, "%s%s%s", escSend, strings.Replace(str, "\r", "\n", -1), escEnd)
 	typekeyas.String(conIn, str)
 }
 
+// Send is the implement of the lua-function `send`
 func Send(L *lua.LState) int {
 	send(L.ToString(1))
 	L.Push(lua.LTrue)
@@ -73,6 +75,7 @@ func expect(keywords []string) int {
 	}
 }
 
+// Expect is the implement of the lua-function `expect`
 func Expect(L *lua.LState) int {
 	n := L.GetTop()
 	keywords := make([]string, n)
@@ -88,7 +91,7 @@ var waitProcess = []*exec.Cmd{}
 func spawn(args []string) bool {
 	var cmd *exec.Cmd
 	for _, s := range args {
-		fmt.Fprintf(echo, "%s\"%s\"%s ", SPAWN, s, END)
+		fmt.Fprintf(echo, "%s\"%s\"%s ", escSpawn, s, escEnd)
 	}
 	fmt.Fprintln(echo)
 	if len(args) <= 1 {
@@ -102,12 +105,12 @@ func spawn(args []string) bool {
 	if err := cmd.Start(); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		return false
-	} else {
-		waitProcess = append(waitProcess, cmd)
-		return true
 	}
+	waitProcess = append(waitProcess, cmd)
+	return true
 }
 
+// Spawn is the implement of the lua-function `spawn`
 func Spawn(L *lua.LState) int {
 	n := L.GetTop()
 	if n < 1 {
@@ -126,6 +129,8 @@ func Spawn(L *lua.LState) int {
 	return 1
 }
 
+// DoFileExceptForAtmarkLines is the same (*lua.LState)DoFile
+// but ignores lines starting with '@'
 func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
 	fd, err := os.Open(fname)
 	if err != nil {
@@ -153,7 +158,7 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
 	return L.PCall(0, 0, nil)
 }
 
-func Main() error {
+func main1() error {
 	flag.Parse()
 
 	if *eOption == "" && *xOption == "" && len(flag.Args()) < 1 {
@@ -196,7 +201,7 @@ func Main() error {
 }
 
 func main() {
-	if err := Main(); err != nil {
+	if err := main1(); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	} else {
