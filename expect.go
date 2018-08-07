@@ -129,6 +129,8 @@ func Spawn(L *lua.LState) int {
 	return 1
 }
 
+const ByteOrdermark = "\xEF\xBB\xBF"
+
 // DoFileExceptForAtmarkLines is the same (*lua.LState)DoFile
 // but ignores lines starting with '@'
 func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
@@ -141,6 +143,7 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
 		scan := bufio.NewScanner(fd)
 		for scan.Scan() {
 			line := scan.Text()
+			line = strings.Replace(line,ByteOrdermark,"",-1)
 			if len(line) > 0 && line[0] == '@' {
 				line = ""
 			}
