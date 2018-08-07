@@ -54,10 +54,10 @@ Connection to example.com closed.
 The script embeded in the batchfile:
 
 ```sample.cmd
-@expect.exe -x "%~f0"
+@expect.exe "%~f0"
 @exit /b
 
--- `-x` option lets Lua ignore lines starting with '@'
+-- Lines starting with '@' are ignored by expect.exe
 -- to embed the script into the batchfile.
 
 echo(true)
