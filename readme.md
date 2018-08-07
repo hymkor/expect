@@ -18,6 +18,7 @@ Expect for Windows Powered by GopherLua
         - `echo(true)`: echo on
         - `echo(false)`: echo off
         - `echo("...")`: print a string
+    - `arg[]` contains commandline arguments (`arg[0]` is scriptname)
 
 Sample
 ------
