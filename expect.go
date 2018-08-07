@@ -189,6 +189,12 @@ func main1() error {
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
 
+	table := L.NewTable()
+	for i, s := range flag.Args() {
+		L.SetTable(table, lua.LNumber(i), lua.LString(s))
+	}
+	L.SetGlobal("arg", table)
+
 	if *eOption != "" {
 		err = L.DoString(*eOption)
 	} else {
