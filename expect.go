@@ -19,7 +19,7 @@ import (
 )
 
 var eOption = flag.String("e", "", "execute string")
-var xOption = flag.String("x", "", "execute file except for lines startings with '@'")
+var xOption = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
 
 var conIn consoleinput.Handle
 
@@ -143,7 +143,7 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
 		scan := bufio.NewScanner(fd)
 		for scan.Scan() {
 			line := scan.Text()
-			line = strings.Replace(line,ByteOrdermark,"",-1)
+			line = strings.Replace(line, ByteOrdermark, "", -1)
 			if len(line) > 0 && line[0] == '@' {
 				line = ""
 			}
@@ -164,7 +164,7 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
 func main1() error {
 	flag.Parse()
 
-	if *eOption == "" && *xOption == "" && len(flag.Args()) < 1 {
+	if *eOption == "" && len(flag.Args()) < 1 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
 	}
 
@@ -191,12 +191,9 @@ func main1() error {
 
 	if *eOption != "" {
 		err = L.DoString(*eOption)
-	} else if *xOption != "" {
-		err = DoFileExceptForAtmarkLines(L, *xOption)
 	} else {
-		err = L.DoFile(flag.Arg(0))
+		err = DoFileExceptForAtmarkLines(L, flag.Arg(0))
 	}
-
 	for _, c := range waitProcess {
 		c.Wait()
 	}
