@@ -12,9 +12,9 @@ import (
 
 	"github.com/mattn/go-colorable"
 	"github.com/yuin/gopher-lua"
-	"github.com/zetamatta/go-getch/consoleinput"
-	"github.com/zetamatta/go-getch/consoleoutput"
-	"github.com/zetamatta/go-getch/typekeyas"
+	"github.com/zetamatta/go-console/input"
+	"github.com/zetamatta/go-console/output"
+	"github.com/zetamatta/go-console/typekeyas"
 	"github.com/zetamatta/go-texts"
 	"github.com/zetamatta/go-texts/filter"
 )
@@ -58,11 +58,9 @@ func Send(L *lua.LState) int {
 	return 1
 }
 
-var conOut consoleoutput.Handle
-
 func expect(keywords []string) int {
 	for {
-		output, err := conOut.GetRecentOutput()
+		output, err := consoleoutput.GetRecentOutput()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
 			return -1
@@ -163,17 +161,8 @@ func main1() error {
 	}
 
 	var err error
-	conIn, err = consoleinput.New()
-	if err != nil {
-		return err
-	}
+	conIn = consoleinput.New()
 	defer conIn.Close()
-
-	conOut, err = consoleoutput.New()
-	if err != nil {
-		return err
-	}
-	defer conOut.Close()
 
 	L := lua.NewState()
 	defer L.Close()
