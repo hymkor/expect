@@ -1,10 +1,9 @@
 package main
 
 import (
-	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -16,6 +15,8 @@ import (
 	"github.com/zetamatta/go-getch/consoleinput"
 	"github.com/zetamatta/go-getch/consoleoutput"
 	"github.com/zetamatta/go-getch/typekeyas"
+	"github.com/zetamatta/go-texts"
+	"github.com/zetamatta/go-texts/filter"
 )
 
 var eOption = flag.String("e", "", "execute string")
@@ -129,8 +130,6 @@ func Spawn(L *lua.LState) int {
 	return 1
 }
 
-const ByteOrdermark = "\xEF\xBB\xBF"
-
 // DoFileExceptForAtmarkLines is the same (*lua.LState)DoFile
 // but ignores lines starting with '@'
 func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
@@ -138,22 +137,17 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
 	if err != nil {
 		return err
 	}
-	reader, writer := io.Pipe()
-	go func() {
-		scan := bufio.NewScanner(fd)
-		for scan.Scan() {
-			line := scan.Text()
-			line = strings.Replace(line, ByteOrdermark, "", -1)
-			if len(line) > 0 && line[0] == '@' {
-				line = ""
-			}
-			fmt.Fprintln(writer, line)
+	defer fd.Close()
+
+	reader := filter.New(fd, func(line []byte) ([]byte, error) {
+		line = bytes.Replace(line, texts.ByteOrderMark, []byte{}, -1)
+		if len(line) > 0 && line[0] == '@' {
+			line = []byte{'\n'}
 		}
-		writer.Close()
-		fd.Close()
-	}()
+		return line, nil
+	})
+
 	f, err := L.Load(reader, fname)
-	reader.Close()
 	if err != nil {
 		return err
 	}
