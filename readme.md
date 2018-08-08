@@ -13,6 +13,7 @@ Expect for Windows Powered by GopherLua
         - :
         - When error occured, rc=-1
     - `send()` occurs keyboard events against CONIN$.
+        - `send(S,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
     - `spawn()` starts applications and returns true on success or false on failure.
     - `echo()` controls echoback
         - `echo(true)`: echo on
