@@ -46,14 +46,23 @@ func Echo(L *lua.LState) int {
 	return 1
 }
 
-func send(str string) {
+func send(str string, wait int) {
 	fmt.Fprintf(echo, "%s%s%s", escSend, strings.Replace(str, "\r", "\n", -1), escEnd)
-	typekeyas.String(conIn, str)
+	for _, c := range str {
+		typekeyas.Rune(conIn, c)
+		if wait > 0 {
+			time.Sleep(time.Second * time.Duration(wait) / 1000)
+		}
+	}
 }
 
 // Send is the implement of the lua-function `send`
 func Send(L *lua.LState) int {
-	send(L.ToString(1))
+	wait := 0
+	if val, ok := L.Get(2).(lua.LNumber); ok {
+		wait = int(val)
+	}
+	send(L.ToString(1), wait)
 	L.Push(lua.LTrue)
 	return 1
 }
