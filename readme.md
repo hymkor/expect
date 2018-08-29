@@ -12,8 +12,9 @@ Expect for Windows Powered by GopherLua
         - When C was found in cursor-line, rc=2
         - :
         - When error occured, rc=-1
-    - `send()` occurs keyboard events against CONIN$.
+    - `send()` causes keyboard events against CONIN$.
         - `send(S,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
+    - `sendln()` is same as send() but append CR.
     - `spawn()` starts applications and returns true on success or false on failure.
     - `echo()` controls echoback
         - `echo(true)`: echo on
