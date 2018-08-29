@@ -56,13 +56,24 @@ func send(str string, wait int) {
 	}
 }
 
+func getWaitFrom2ndArg(L *lua.LState) int {
+	if val, ok := L.Get(2).(lua.LNumber); ok {
+		return int(val)
+	} else {
+		return 0
+	}
+}
+
 // Send is the implement of the lua-function `send`
 func Send(L *lua.LState) int {
-	wait := 0
-	if val, ok := L.Get(2).(lua.LNumber); ok {
-		wait = int(val)
-	}
-	send(L.ToString(1), wait)
+	send(L.ToString(1), getWaitFrom2ndArg(L))
+	L.Push(lua.LTrue)
+	return 1
+}
+
+// Sendln sends 1st arguments and CR
+func Sendln(L *lua.LState) int {
+	send(L.ToString(1)+"\r", getWaitFrom2ndArg(L))
 	L.Push(lua.LTrue)
 	return 1
 }
@@ -178,6 +189,7 @@ func main1() error {
 
 	L.SetGlobal("echo", L.NewFunction(Echo))
 	L.SetGlobal("send", L.NewFunction(Send))
+	L.SetGlobal("sendln", L.NewFunction(Sendln))
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
 
