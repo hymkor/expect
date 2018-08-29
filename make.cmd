@@ -1,24 +1,25 @@
 @setlocal
+@set "PROMPT=$G "
+@pushd "%~dp0."
+@for %%I in ("%CD%") do set "NAME=%%~nI"
 @call :"%1"
+@popd
 @endlocal
 @exit /b
 
 :""
+:"all"
     go fmt
-    @setlocal
-    @for %%I in (386 amd64) do call :buildas %%I
-    @endlocal
+    @for %%I in (386 amd64) do call :build %%I
     @exit /b
 
-:buildas
-    @if not exist cmd mkdir cmd
+:build
+    @if not exist "cmd"    mkdir "cmd"
     @if not exist "cmd\%1" mkdir "cmd\%1"
-    @setlocal
     set "GOARCH=%1"
-    go build -o cmd\%1\expect.exe
-    @endlocal
+    go build -o cmd\%1\%NAME%.exe -ldflags "-s -w"
     @exit /b
 
 :"package"
-    for %%I in (386 amd64) do zip -9j expect-%DATE:/=%-%%I.zip cmd\%%I\expect.exe
+    for %%I in (386 amd64) do zip -9j "%NAME%-%DATE:/=%-%%I.zip" "cmd\%%I\%NAME%.exe"
     @exit /b
