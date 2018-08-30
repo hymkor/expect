@@ -78,8 +78,8 @@ func Sendln(L *lua.LState) int {
 	return 1
 }
 
-func expect(keywords []string) int {
-	for {
+func expect(keywords []string, until time.Time) int {
+	for time.Now().Before(until) {
 		output, err := consoleoutput.GetRecentOutput()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
@@ -92,6 +92,7 @@ func expect(keywords []string) int {
 		}
 		time.Sleep(time.Second / time.Duration(10))
 	}
+	return -2
 }
 
 // Expect is the implement of the lua-function `expect`
@@ -101,7 +102,14 @@ func Expect(L *lua.LState) int {
 	for i := 1; i <= n; i++ {
 		keywords[i-1] = L.ToString(i)
 	}
-	L.Push(lua.LNumber(expect(keywords)))
+
+	var until time.Time
+	if timeout, ok := L.GetGlobal("timeout").(lua.LNumber); ok {
+		until = time.Now().Add(time.Duration(timeout) * time.Second)
+	} else {
+		until = time.Now().Add(time.Hour)
+	}
+	L.Push(lua.LNumber(expect(keywords, until)))
 	return 1
 }
 
