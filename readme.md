@@ -12,6 +12,7 @@ Expect for Windows Powered by GopherLua
         - When C was found in cursor-line, rc=2
         - :
         - When error occured, rc=-1
+        - When timeout occurs, rc=-2 (set variable like `timeout=(SECONDS)`,default 1 hour)
     - `send()` causes keyboard events against CONIN$.
         - `send(S,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
     - `sendln()` is same as send() but append CR.
