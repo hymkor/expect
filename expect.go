@@ -165,10 +165,20 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) error {
 	}
 	defer fd.Close()
 
+	lineTop := true
 	reader := filter.New(fd, func(line []byte) ([]byte, error) {
 		line = bytes.Replace(line, texts.ByteOrderMark, []byte{}, -1)
-		if len(line) > 0 && line[0] == '@' {
-			line = []byte{'\n'}
+		line = bytes.Replace(line,
+			[]byte{'\n', '@'},
+			[]byte{'\n', '-', '-', '@'}, -1)
+		if lineTop && len(line) > 0 && line[0] == '@' {
+			tmp := make([]byte, 0, len(line)+2)
+			tmp = append(tmp, '-')
+			tmp = append(tmp, '-')
+			line = append(tmp, line...)
+		}
+		if len(line) > 0 {
+			lineTop = (line[len(line)-1] == '\n')
 		}
 		return line, nil
 	})
