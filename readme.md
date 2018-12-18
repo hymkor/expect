@@ -61,7 +61,7 @@ The script embeded in the batchfile:
 @expect.exe "%~f0"
 @exit /b
 
--- Lines starting with '@' are ignored by expect.exe
+-- Lines starting with '@' are replaced to '--@' by expect.exe
 -- to embed the script into the batchfile.
 
 echo(true)
