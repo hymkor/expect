@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -12,7 +11,9 @@ import (
 	"time"
 
 	"github.com/mattn/go-colorable"
+	"github.com/tidwall/transform"
 	"github.com/yuin/gopher-lua"
+
 	"github.com/zetamatta/go-console/input"
 	"github.com/zetamatta/go-console/output"
 	"github.com/zetamatta/go-console/typekeyas"
@@ -162,21 +163,23 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
 	if err != nil {
 		return err
 	}
-	in, out := io.Pipe()
-	defer in.Close()
 
-	go func() {
-		sc := bufio.NewScanner(fd)
-		for sc.Scan() {
-			text := sc.Text()
-			if len(text) > 0 && text[0] == '@' {
-				fmt.Fprint(out, "--")
-			}
-			fmt.Fprintln(out, text)
+	br := bufio.NewReader(fd)
+	in := transform.NewTransformer(func() ([]byte, error) {
+		bin, err := br.ReadBytes('\n')
+		if err != nil {
+			fd.Close()
+			return nil, err
 		}
-		out.CloseWithError(sc.Err())
-		fd.Close()
-	}()
+		if len(bin) > 0 && bin[0] == '@' {
+			rc := make([]byte, 0, len(bin)+2)
+			rc = append(rc, '-')
+			rc = append(rc, '-')
+			rc = append(rc, bin...)
+			return rc, nil
+		}
+		return bin, nil
+	})
 
 	f, err := L.Load(in, fname)
 	if err != nil {
