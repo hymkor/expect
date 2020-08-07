@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/mattn/go-colorable"
@@ -113,7 +114,7 @@ func Expect(L *lua.LState) int {
 	return 1
 }
 
-var waitProcess = []*exec.Cmd{}
+var waitGroup sync.WaitGroup
 
 func spawn(args []string) bool {
 	var cmd *exec.Cmd
@@ -133,7 +134,11 @@ func spawn(args []string) bool {
 		fmt.Fprintln(os.Stderr, err.Error())
 		return false
 	}
-	waitProcess = append(waitProcess, cmd)
+	waitGroup.Add(1)
+	go func() {
+		cmd.Wait()
+		waitGroup.Done()
+	}()
 	return true
 }
 
@@ -220,9 +225,7 @@ func main1() error {
 	} else {
 		err = DoFileExceptForAtmarkLines(L, flag.Arg(0))
 	}
-	for _, c := range waitProcess {
-		c.Wait()
-	}
+	waitGroup.Wait()
 	return err
 }
 
