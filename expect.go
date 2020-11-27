@@ -116,8 +116,9 @@ func Expect(L *lua.LState) int {
 
 var waitGroup sync.WaitGroup
 
+var cmd *exec.Cmd
+
 func spawn(args []string) bool {
-	var cmd *exec.Cmd
 	for _, s := range args {
 		fmt.Fprintf(echo, "%s\"%s\"%s ", escSpawn, s, escEnd)
 	}
@@ -158,6 +159,17 @@ func Spawn(L *lua.LState) int {
 	} else {
 		L.Push(lua.LFalse)
 	}
+	return 1
+}
+
+func Kill(L *lua.LState) int {
+	waitGroup.Add(1)
+	go func() {
+		cmd.Wait()
+		waitGroup.Done()
+	}()
+
+	cmd.Process.Kill()
 	return 1
 }
 
@@ -213,6 +225,7 @@ func main1() error {
 	L.SetGlobal("sendln", L.NewFunction(Sendln))
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
+	L.SetGlobal("kill", L.NewFunction(Kill))
 
 	table := L.NewTable()
 	for i, s := range flag.Args() {
