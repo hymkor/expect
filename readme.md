@@ -22,6 +22,7 @@ Expect for Windows Powered by GopherLua
         - `echo(false)`: echo off
         - `echo("...")`: print a string
     - `arg[]` contains commandline arguments (`arg[0]` is scriptname)
+    - `trap=function()...end` is called on Ctrl-C (source built version only)
 
 Sample
 ------
