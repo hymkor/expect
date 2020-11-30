@@ -21,18 +21,21 @@ import (
 	"github.com/zetamatta/go-console/typekeyas"
 )
 
-var eOption = flag.String("e", "", "execute string")
-var xOption = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
+const (
+	escEcho  = "\x1B[40;31;1m"
+	escSend  = "\x1B[40;35;1m"
+	escSpawn = "\x1B[40;32;1m"
+	escEnd   = "\x1B[37;1m"
+)
+
+var (
+	eOption = flag.String("e", "", "execute string")
+	xOption = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
+)
 
 var conIn consoleinput.Handle
-
 var output = colorable.NewColorableStdout()
 var echo = ioutil.Discard
-
-const escEcho = "\x1B[40;31;1m"
-const escSend = "\x1B[40;35;1m"
-const escSpawn = "\x1B[40;32;1m"
-const escEnd = "\x1B[37;1m"
 
 // Echo is the implement of the lua-function `echo`
 func Echo(L *lua.LState) int {
@@ -198,7 +201,7 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
 	return L.PCall(0, 0, nil)
 }
 
-func main1() error {
+func mains() error {
 	flag.Parse()
 
 	if *eOption == "" && len(flag.Args()) < 1 {
@@ -238,10 +241,8 @@ func main1() error {
 }
 
 func main() {
-	if err := main1(); err != nil {
+	if err := mains(); err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
-	} else {
-		os.Exit(0)
 	}
 }
