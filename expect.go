@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -79,8 +80,11 @@ func Sendln(L *lua.LState) int {
 	return 1
 }
 
-func expect(keywords []string, until time.Time) int {
+func expect(ctx context.Context, keywords []string, until time.Time) int {
 	for time.Now().Before(until) {
+		if IsContextCanceled(ctx) {
+			return -3
+		}
 		output, err := consoleoutput.GetRecentOutput()
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err.Error())
@@ -110,7 +114,7 @@ func Expect(L *lua.LState) int {
 	} else {
 		until = time.Now().Add(time.Hour)
 	}
-	L.Push(lua.LNumber(expect(keywords, until)))
+	L.Push(lua.LNumber(expect(L.Context(), keywords, until)))
 	return 1
 }
 
@@ -219,6 +223,10 @@ func main1() error {
 		L.SetTable(table, lua.LNumber(i), lua.LString(s))
 	}
 	L.SetGlobal("arg", table)
+
+	end, ctx := interruptToCancel(context.Background(), nil)
+	defer end()
+	L.SetContext(ctx)
 
 	if *eOption != "" {
 		err = L.DoString(*eOption)
