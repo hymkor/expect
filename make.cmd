@@ -23,3 +23,8 @@
 :"package"
     for %%I in (386 amd64) do zip -9j "%NAME%-%DATE:/=%-%%I.zip" "cmd\%%I\%NAME%.exe"
     @exit /b
+
+:"get"
+    go get -u
+    go mod tidy
+    @exit /b
