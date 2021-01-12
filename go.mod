@@ -7,5 +7,5 @@ require (
 	github.com/tidwall/transform v0.0.0-20201103190739-32f242e2dbde
 	github.com/yuin/gopher-lua v0.0.0-20200816102855-ee81675732da
 	github.com/zetamatta/go-console v0.0.1
-	golang.org/x/sys v0.0.0-20201126233918-771906719818 // indirect
+	golang.org/x/sys v0.0.0-20210112091331-59c308dcf3cc // indirect
 )
