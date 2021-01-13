@@ -18,23 +18,21 @@ func IsContextCanceled(ctx context.Context) bool {
 	return false
 }
 
-func interruptToCancel(ctx context.Context, on func()) (func(), context.Context) {
+func interruptToCancel(ctx context.Context) (context.Context, func()) {
 	newctx, cancel := context.WithCancel(ctx)
 
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt)
+	sigch := make(chan os.Signal, 1)
+	signal.Notify(sigch, os.Interrupt)
 	go func() {
 		select {
-		case <-sigChan:
-			if on != nil {
-				on()
-			}
+		case <-sigch:
 			cancel()
+		case <-newctx.Done():
 		}
 	}()
-	return func() {
-		signal.Stop(sigChan)
-		close(sigChan)
+	return newctx, func() {
 		cancel()
-	}, newctx
+		signal.Stop(sigch)
+		close(sigch)
+	}
 }

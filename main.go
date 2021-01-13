@@ -202,7 +202,7 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
 }
 
 func mains() error {
-	if closer := colorable.EnableColorsStdout(nil) ; closer != nil {
+	if closer := colorable.EnableColorsStdout(nil); closer != nil {
 		defer closer()
 	}
 	flag.Parse()
@@ -230,8 +230,8 @@ func mains() error {
 	}
 	L.SetGlobal("arg", table)
 
-	end, ctx := interruptToCancel(context.Background(), nil)
-	defer end()
+	ctx, clean := interruptToCancel(context.Background())
+	defer clean()
 	L.SetContext(ctx)
 
 	if *eOption != "" {
