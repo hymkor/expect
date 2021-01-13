@@ -230,12 +230,7 @@ func mains() error {
 	}
 	L.SetGlobal("arg", table)
 
-	end, ctx := interruptToCancel(context.Background(), func() {
-		if trap, ok := L.GetGlobal("trap").(*lua.LFunction); ok {
-			L.Push(trap)
-			L.PCall(0, 0, nil)
-		}
-	})
+	end, ctx := interruptToCancel(context.Background(), nil)
 	defer end()
 	L.SetContext(ctx)
 
