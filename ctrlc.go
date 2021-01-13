@@ -6,18 +6,6 @@ import (
 	"os/signal"
 )
 
-func IsContextCanceled(ctx context.Context) bool {
-	done := ctx.Done()
-	if done != nil {
-		select {
-		case <-done:
-			return true
-		default:
-		}
-	}
-	return false
-}
-
 func interruptToCancel(ctx context.Context) (context.Context, func()) {
 	newctx, cancel := context.WithCancel(ctx)
 

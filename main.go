@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -83,25 +84,36 @@ func Sendln(L *lua.LState) int {
 	return 1
 }
 
-func expect(ctx context.Context, keywords []string, until time.Time) int {
-	for time.Now().Before(until) {
-		if IsContextCanceled(ctx) {
-			return -3
-		}
+func expect(ctx context.Context, keywords []string, timeover time.Duration) (int, error) {
+	tick := time.NewTicker(time.Second / 10)
+	defer tick.Stop()
+	timer := time.NewTimer(timeover)
+	defer timer.Stop()
+	for {
 		output, err := consoleoutput.GetRecentOutput()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, err.Error())
-			return -1
+			return -1, err
 		}
 		for i, str := range keywords {
 			if strings.Index(output, str) >= 0 {
-				return i
+				return i, nil
 			}
 		}
-		time.Sleep(time.Second / time.Duration(10))
+		select {
+		case <-ctx.Done():
+			return -1, ctx.Err()
+		case <-timer.C:
+			return -1, context.DeadlineExceeded
+		case <-tick.C:
+		}
 	}
-	return -2
 }
+
+const (
+	errnoExpectGetRecentOutput = -1
+	errnoExpectTimeOut         = -2
+	errnoExpectContextDone     = -3
+)
 
 // Expect is the implement of the lua-function `expect`
 func Expect(L *lua.LState) int {
@@ -111,13 +123,22 @@ func Expect(L *lua.LState) int {
 		keywords[i-1] = L.ToString(i)
 	}
 
-	var until time.Time
-	if timeout, ok := L.GetGlobal("timeout").(lua.LNumber); ok {
-		until = time.Now().Add(time.Duration(timeout) * time.Second)
-	} else {
-		until = time.Now().Add(time.Hour)
+	timeout := time.Hour
+	if n, ok := L.GetGlobal("timeout").(lua.LNumber); ok {
+		timeout = time.Duration(n) * time.Second
 	}
-	L.Push(lua.LNumber(expect(L.Context(), keywords, until)))
+	rc, err := expect(L.Context(), keywords, timeout)
+	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			rc = errnoExpectContextDone
+		} else if errors.Is(err, context.DeadlineExceeded) {
+			rc = errnoExpectTimeOut
+		} else {
+			rc = errnoExpectGetRecentOutput
+			fmt.Fprintln(os.Stderr, err.Error())
+		}
+	}
+	L.Push(lua.LNumber(rc))
 	return 1
 }
 
