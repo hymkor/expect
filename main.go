@@ -23,7 +23,7 @@ import (
 	"github.com/zetamatta/go-console/typekeyas"
 )
 
-const (
+var (
 	escEcho  = "\x1B[40;31;1m"
 	escSend  = "\x1B[40;35;1m"
 	escSpawn = "\x1B[40;32;1m"
@@ -31,8 +31,9 @@ const (
 )
 
 var (
-	eOption = flag.String("e", "", "execute string")
-	xOption = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
+	eOption     = flag.String("e", "", "execute string")
+	xOption     = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
+	colorOption = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
 )
 
 var conIn consoleinput.Handle
@@ -235,6 +236,13 @@ func mains() error {
 
 	if *eOption == "" && len(flag.Args()) < 1 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
+	}
+
+	if *colorOption == "never" {
+		escEcho = ""
+		escSend = ""
+		escSpawn = ""
+		escEnd = ""
 	}
 
 	var err error
