@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"errors"
 	"flag"
@@ -22,7 +23,7 @@ import (
 	"github.com/zetamatta/go-console/typekeyas"
 )
 
-const (
+var (
 	escEcho  = "\x1B[40;31;1m"
 	escSend  = "\x1B[40;35;1m"
 	escSpawn = "\x1B[40;32;1m"
@@ -30,8 +31,9 @@ const (
 )
 
 var (
-	eOption = flag.String("e", "", "execute string")
-	xOption = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
+	eOption     = flag.String("e", "", "execute string")
+	xOption     = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
+	colorOption = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
 )
 
 var conIn consoleinput.Handle
@@ -198,17 +200,21 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
 	}
 
 	br := bufio.NewReader(fd)
+	keepComment := false
 	in := transform.NewTransformer(func() ([]byte, error) {
 		bin, err := br.ReadBytes('\n')
 		if err != nil {
 			fd.Close()
 			return nil, err
 		}
-		if len(bin) > 0 && bin[0] == '@' {
+		if keepComment || (len(bin) > 0 && bin[0] == '@') {
 			rc := make([]byte, 0, len(bin)+2)
 			rc = append(rc, '-')
 			rc = append(rc, '-')
 			rc = append(rc, bin...)
+
+			trim := bytes.TrimRight(bin, "\r\n")
+			keepComment = len(trim) > 0 && bin[len(trim)-1] == '^'
 			return rc, nil
 		}
 		return bin, nil
@@ -230,6 +236,13 @@ func mains() error {
 
 	if *eOption == "" && len(flag.Args()) < 1 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
+	}
+
+	if *colorOption == "never" {
+		escEcho = ""
+		escSend = ""
+		escSpawn = ""
+		escEnd = ""
 	}
 
 	var err error
