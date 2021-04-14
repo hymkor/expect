@@ -7,6 +7,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -146,7 +147,7 @@ func Expect(L *lua.LState) int {
 
 var waitGroup sync.WaitGroup
 
-func spawn(args []string) bool {
+func spawn(args []string, log io.Writer) (int, error) {
 	var cmd *exec.Cmd
 	for _, s := range args {
 		fmt.Fprintf(echo, "%s\"%s\"%s ", escSpawn, s, escEnd)
@@ -161,15 +162,15 @@ func spawn(args []string) bool {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		return false
+		return 0, err
 	}
 	waitGroup.Add(1)
+	pid := cmd.Process.Pid
 	go func() {
 		cmd.Wait()
 		waitGroup.Done()
 	}()
-	return true
+	return pid, nil
 }
 
 // Spawn is the implement of the lua-function `spawn`
@@ -183,11 +184,12 @@ func Spawn(L *lua.LState) int {
 	for i := 0; i < n; i++ {
 		args[i] = L.CheckString(1 + i)
 	}
-	if spawn(args) {
-		L.Push(lua.LTrue)
-	} else {
-		L.Push(lua.LFalse)
+	pid, err := spawn(args, echo)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		return 0
 	}
+	L.Push(lua.LNumber(pid))
 	return 1
 }
 
