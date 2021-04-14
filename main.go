@@ -192,6 +192,27 @@ func Spawn(L *lua.LState) int {
 	return 1
 }
 
+func kill(pid int) error {
+	process, err := os.FindProcess(pid)
+	if err != nil {
+		return err
+	}
+	return process.Kill()
+}
+
+func Kill(L *lua.LState) int {
+	pid, ok := L.Get(1).(lua.LNumber)
+	if !ok {
+		fmt.Fprintln(os.Stderr, "wait: not process-id")
+		return 0
+	}
+	err := kill(int(pid))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "wait: %s\n", err.Error())
+	}
+	return 0
+}
+
 // DoFileExceptForAtmarkLines is the same (*lua.LState)DoFile
 // but ignores lines starting with '@'
 func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
@@ -258,6 +279,7 @@ func mains() error {
 	L.SetGlobal("sendln", L.NewFunction(Sendln))
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
+	L.SetGlobal("kill", L.NewFunction(Kill))
 
 	table := L.NewTable()
 	for i, s := range flag.Args() {
