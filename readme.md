@@ -17,13 +17,14 @@ Expect for Windows Powered by GopherLua
         - `send(S,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
     - `sendln()` is same as send() but append CR.
     - `spawn()` starts applications and
-            - On success, it returns PROCESS-ID
+            - On success, it returns PROCESS-ID(integer)
             - On failure, it returns nil
     - `echo()` controls echoback
         - `echo(true)`: echo on
         - `echo(false)`: echo off
         - `echo("...")`: print a string
     - `arg[]` contains commandline arguments (`arg[0]` is scriptname)
+    - `kill(PROCESS-ID)` kills the process.
 
 Sample
 ------
