@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -39,7 +38,7 @@ var (
 
 var conIn consoleinput.Handle
 var output = colorable.NewColorableStdout()
-var echo = ioutil.Discard
+var echo = io.Discard
 
 // Echo is the implement of the lua-function `echo`
 func Echo(L *lua.LState) int {
@@ -47,7 +46,7 @@ func Echo(L *lua.LState) int {
 	if value == lua.LTrue {
 		echo = output
 	} else if lua.LVIsFalse(value) {
-		echo = ioutil.Discard
+		echo = io.Discard
 	} else {
 		fmt.Fprintf(output, "%s%s%s\n", escEcho, value.String(), escEnd)
 	}
