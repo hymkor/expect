@@ -21,7 +21,8 @@
     @exit /b
 
 :"package"
-    for %%I in (386 amd64) do zip -9j "%NAME%-%DATE:/=%-%%I.zip" "cmd\%%I\%NAME%.exe"
+    set /P "VERSION=Version ? "
+    for %%I in (386 amd64) do zip -9j "%NAME%-%VERSION%-%%I.zip" "cmd\%%I\%NAME%.exe"
     @exit /b
 
 :"get"
