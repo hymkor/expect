@@ -67,9 +67,8 @@ func send(str string, wait int) {
 func getWaitFrom2ndArg(L *lua.LState) int {
 	if val, ok := L.Get(2).(lua.LNumber); ok {
 		return int(val)
-	} else {
-		return 0
 	}
+	return 0
 }
 
 // Send is the implement of the lua-function `send`
@@ -200,6 +199,7 @@ func kill(pid int) error {
 	return process.Kill()
 }
 
+// Kill is the implement of the lua-function `kill`
 func Kill(L *lua.LState) int {
 	pid, ok := L.Get(1).(lua.LNumber)
 	if !ok {
