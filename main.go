@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"os/signal"
 	"strings"
 	"sync"
 	"time"
@@ -287,8 +288,8 @@ func mains() error {
 	}
 	L.SetGlobal("arg", table)
 
-	ctx, clean := interruptToCancel(context.Background())
-	defer clean()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 	L.SetContext(ctx)
 
 	if *eOption != "" {
