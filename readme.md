@@ -6,25 +6,26 @@ Expect for Windows Powered by GopherLua
 - A tool like `expect` on Linux.
 - Scripts are to be written with Lua ([GopherLua](https://github.com/yuin/gopher-lua))
 - Some built-in functions exists:
-    - `rc=expect(A,B,C...)` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
-        - When A was found in cursor-line, rc=0
-        - When B was found in cursor-line, rc=1
-        - When C was found in cursor-line, rc=2
+    - `RC=expect(A,B,C...)` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
+        - When A was found in cursor-line, RC=0
+        - When B was found in cursor-line, RC=1
+        - When C was found in cursor-line, RC=2
         - :
-        - When error occured, rc=-1
-        - When timeout occurs, rc=-2 (set variable like `timeout=(SECONDS)`,default 1 hour)
-    - `send()` causes keyboard events against CONIN$.
-        - `send(S,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
+        - When error occured, RC=-1
+        - When timeout occurs, RC=-2 (set variable like `timeout=(SECONDS)`,default 1 hour)
+    - `send(TEXT)` sends TEXT to the terminal as keyboard events.
+        - `send(TEXT,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
     - `sendln()` is same as send() but append CR.
-    - `spawn()` starts applications and
-            - On success, it returns PROCESS-ID(integer)
-            - On failure, it returns nil
+    - `PID=spawn(NAME,ARG1,ARG2,...)` starts applications and
+        - On success, `PID` is process-id(integer).
+        - On failure, `PID` is nil.
     - `echo()` controls echoback
         - `echo(true)`: echo on
         - `echo(false)`: echo off
         - `echo("...")`: print a string
     - `arg[]` contains commandline arguments (`arg[0]` is scriptname)
-    - `kill(PROCESS-ID)` kills the process.
+    - `kill(PROCESS-ID)` kills the process. (v0.4.0~)
+    - `spawnctx(NAME,ARG1,ARG2,...)` is similar with spawn() but the process started by spawnctx is killed automatically when Ctrl-C is pressed. (v0.5.0~)
 
 Sample
 ------
