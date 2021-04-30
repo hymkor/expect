@@ -1,7 +1,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/zetamatta/expect)](https://goreportcard.com/report/github.com/zetamatta/expect)
 
-Expect for Windows Powered by GopherLua
-=======================================================
+Expect.lua for Windows
+======================
 
 - A tool like `expect` on Linux.
 - Scripts are to be written with Lua ([GopherLua](https://github.com/yuin/gopher-lua))
