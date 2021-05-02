@@ -29,3 +29,7 @@
     go get -u
     go mod tidy
     @exit /b
+
+:"install"
+    for /F "skip=1" %%I in ('where expect.exe') do copy /-Y expect.exe "%%I"
+    exit /b
