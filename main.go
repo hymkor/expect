@@ -49,7 +49,7 @@ func Echo(L *lua.LState) int {
 	} else if lua.LVIsFalse(value) {
 		echo = io.Discard
 	} else {
-		fmt.Fprintf(output, "%s%s%s\n", escEcho, value.String(), escEnd)
+		fmt.Fprintf(output, "%s%s%s\r\n", escEcho, value.String(), escEnd)
 	}
 	L.Push(lua.LTrue)
 	return 1
