@@ -41,18 +41,27 @@ var conIn consoleinput.Handle
 var output = colorable.NewColorableStdout()
 var echo = io.Discard
 
-// Echo is the implement of the lua-function `echo`
-func Echo(L *lua.LState) int {
+func _echo(L *lua.LState, format string) int {
 	value := L.Get(-1)
 	if value == lua.LTrue {
 		echo = output
 	} else if lua.LVIsFalse(value) {
 		echo = io.Discard
 	} else {
-		fmt.Fprintf(output, "%s%s%s\n", escEcho, value.String(), escEnd)
+		fmt.Fprintf(output, format, escEcho, value.String(), escEnd)
 	}
 	L.Push(lua.LTrue)
 	return 1
+}
+
+// Echo is the implement of the lua-function `echo`
+func Echo(L *lua.LState) int {
+	return _echo(L, "%s%s%s\n")
+}
+
+// EchoN is the implement of the lua-function `echon`
+func EchoN(L *lua.LState) int {
+	return _echo(L, "%s%s%s")
 }
 
 func send(str string, wait int) {
@@ -289,6 +298,7 @@ func mains() error {
 	defer L.Close()
 
 	L.SetGlobal("echo", L.NewFunction(Echo))
+	L.SetGlobal("echon", L.NewFunction(EchoN))
 	L.SetGlobal("send", L.NewFunction(Send))
 	L.SetGlobal("sendln", L.NewFunction(Sendln))
 	L.SetGlobal("expect", L.NewFunction(Expect))
