@@ -14,7 +14,7 @@ import (
 	"github.com/tidwall/transform"
 	"github.com/yuin/gopher-lua"
 
-	"github.com/zetamatta/go-console/input"
+	"github.com/hymkor/expect/internal/go-console/input"
 )
 
 var (

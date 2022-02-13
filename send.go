@@ -7,7 +7,7 @@ import (
 
 	"github.com/yuin/gopher-lua"
 
-	"github.com/zetamatta/go-console/typekeyas"
+	"github.com/hymkor/expect/internal/go-console/typekeyas"
 )
 
 func send(str string, wait int) {

@@ -10,7 +10,7 @@ import (
 
 	"github.com/yuin/gopher-lua"
 
-	"github.com/zetamatta/go-console/output"
+	"github.com/hymkor/expect/internal/go-console/output"
 )
 
 func expect(ctx context.Context, keywords []string, timeover time.Duration) (int, error) {
