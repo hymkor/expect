@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/zetamatta/go-console"
+	"github.com/hymkor/expect/internal/go-console"
 )
 
 type Handle windows.Handle

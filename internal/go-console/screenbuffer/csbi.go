@@ -1,7 +1,8 @@
+//go:build windows
 // +build windows
 
 /*
-Package csbi is deprecated. 
+Package csbi is deprecated.
 Use https://godoc.org/golang.org/x/sys/windows#GetConsoleScreenBufferInfo
 */
 package csbi
@@ -11,7 +12,7 @@ import (
 
 	"golang.org/x/sys/windows"
 
-	"github.com/zetamatta/go-console"
+	"github.com/hymkor/expect/internal/go-console"
 )
 
 type coordT = console.CoordT

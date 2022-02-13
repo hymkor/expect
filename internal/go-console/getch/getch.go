@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode/utf16"
 
-	"github.com/zetamatta/go-console/input"
+	"github.com/hymkor/expect/internal/go-console/input"
 )
 
 const (

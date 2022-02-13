@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/zetamatta/go-console/input"
-	"github.com/zetamatta/go-console/typekeyas"
+	"github.com/hymkor/expect/internal/go-console/input"
+	"github.com/hymkor/expect/internal/go-console/typekeyas"
 )
 
 func main() {

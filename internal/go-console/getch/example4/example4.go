@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zetamatta/go-console/getch"
+	"github.com/hymkor/expect/internal/go-console/getch"
 )
 
 func main() {

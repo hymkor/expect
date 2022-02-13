@@ -1,3 +1,4 @@
+//go:build run
 // +build run
 
 package main
@@ -6,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/zetamatta/go-console/output"
+	"github.com/hymkor/expect/internal/go-console/output"
 )
 
 func Main() error {

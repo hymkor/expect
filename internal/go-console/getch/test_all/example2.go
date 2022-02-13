@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/zetamatta/go-console/getch"
+	"github.com/hymkor/expect/internal/go-console/getch"
 )
 
 const COUNT = 5

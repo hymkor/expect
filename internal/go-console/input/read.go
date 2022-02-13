@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/zetamatta/go-console"
+	"golang.org/x/sys/windows"
+
+	"github.com/hymkor/expect/internal/go-console"
 )
 
 var readConsoleInput = console.Kernel32.NewProc("ReadConsoleInputW")

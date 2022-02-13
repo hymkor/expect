@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/zetamatta/go-console/getch"
+	"github.com/hymkor/expect/internal/go-console/getch"
 )
 
 func main() {
@@ -12,5 +12,5 @@ func main() {
 	getch.Flush()
 
 	ch := getch.Rune()
-	fmt.Printf("%08X\n",ch)
+	fmt.Printf("%08X\n", ch)
 }

@@ -3,7 +3,7 @@ package consoleinput
 import (
 	"unsafe"
 
-	"github.com/zetamatta/go-console"
+	"github.com/hymkor/expect/internal/go-console"
 )
 
 var writeConsoleInput = console.Kernel32.NewProc("WriteConsoleInputW")
