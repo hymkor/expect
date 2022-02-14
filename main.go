@@ -60,7 +60,7 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
 	keepComment := false
 	in := transform.NewTransformer(func() ([]byte, error) {
 		bin, err := br.ReadBytes('\n')
-		if err != nil {
+		if err != nil && err != io.EOF {
 			fd.Close()
 			return nil, err
 		}
@@ -72,9 +72,9 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
 
 			trim := bytes.TrimRight(bin, "\r\n")
 			keepComment = len(trim) > 0 && bin[len(trim)-1] == '^'
-			return rc, nil
+			return rc, err
 		}
-		return bin, nil
+		return bin, err
 	})
 
 	f, err := L.Load(in, fname)
