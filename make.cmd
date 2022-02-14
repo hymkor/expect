@@ -8,6 +8,10 @@
 @exit /b
 
 :""
+    for /F %%I in ('git.exe describe --tags') do set "VERSION=%%I"
+    go build -ldflags "-s -w -X main.version=%VERSION%"
+    exit /b
+
 :"all"
     go fmt
     @for %%I in (386 amd64) do call :build %%I
@@ -17,7 +21,8 @@
     @if not exist "bin"    mkdir "bin"
     @if not exist "bin\%1" mkdir "bin\%1"
     set "GOARCH=%1"
-    go build -o bin\%1\%NAME%.exe -ldflags "-s -w"
+    for /F %%I in ('git.exe describe --tags') do set "VERSION=%%I"
+    go build -o bin\%1\%NAME%.exe -ldflags "-s -w -X main.version=%VERSION%"
     @exit /b
 
 :"package"
