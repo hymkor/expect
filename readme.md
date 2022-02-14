@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/zetamatta/expect)](https://goreportcard.com/report/github.com/zetamatta/expect)
+[![Go Report Card](https://goreportcard.com/badge/github.com/hymkor/expect)](https://goreportcard.com/report/github.com/hymkor/expect)
 
 Expect.lua for Windows
 ======================
@@ -31,7 +31,7 @@ Expect.lua for Windows
 Install
 -------
 
-Download the binary package from [Releases](https://github.com/zetamatta/expect/releases) and extract the executable.
+Download the binary package from [Releases](https://github.com/hymkor/expect/releases) and extract the executable.
 
 Sample
 ------
