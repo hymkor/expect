@@ -14,6 +14,7 @@ func wait(pid int) error {
 	return err
 }
 
+// Wait is the implement of the lua-function `wait`
 func Wait(L *lua.LState) int {
 	pid, ok := L.Get(1).(lua.LNumber)
 	if !ok {
