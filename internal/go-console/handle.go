@@ -12,8 +12,13 @@ type CoordT struct {
 	y int16
 }
 
-func (c CoordT) X() int         { return int(c.x) }
-func (c CoordT) Y() int         { return int(c.y) }
+// X is getter of X-coordination.
+func (c CoordT) X() int { return int(c.x) }
+
+// Y is getter of Y-coordination.
+func (c CoordT) Y() int { return int(c.y) }
+
+// XY is getter of all field of the coordination.
 func (c CoordT) XY() (int, int) { return int(c.x), int(c.y) }
 
 // SmallRectT exists for compatible. You should use windows.SmallRect
@@ -24,6 +29,7 @@ type SmallRectT struct {
 	bottom int16
 }
 
+// LeftTopRightBottom is the constructor for SmallRectT
 func LeftTopRightBottom(L, T, R, B int) *SmallRectT {
 	return &SmallRectT{
 		left:   int16(L),
@@ -32,20 +38,29 @@ func LeftTopRightBottom(L, T, R, B int) *SmallRectT {
 		bottom: int16(B),
 	}
 }
-func (s SmallRectT) Left() int   { return int(s.left) }
-func (s SmallRectT) Top() int    { return int(s.top) }
-func (s SmallRectT) Right() int  { return int(s.right) }
+
+// Left is the getter of `left` field.
+func (s SmallRectT) Left() int { return int(s.left) }
+
+// Top is the getter of `top` field.
+func (s SmallRectT) Top() int { return int(s.top) }
+
+// Right is the getter of `right` field.
+func (s SmallRectT) Right() int { return int(s.right) }
+
+// Bottom is the getter of `bottom` field.
 func (s SmallRectT) Bottom() int { return int(s.bottom) }
 
 // Handle is the alias of windows.Handle
 type Handle = windows.Handle
 
+// Kernel32 is the instance of kernel32.dll
 var Kernel32 = windows.NewLazyDLL("kernel32")
 
 var out Handle
 var outOnce sync.Once
 
-// ConOut returns the handle for Console-Output
+// Out returns the handle for Console-Output
 func Out() Handle {
 	return windows.Stdout
 }
@@ -53,6 +68,7 @@ func Out() Handle {
 var in Handle
 var inOnce sync.Once
 
+// In returns the handle for Console-Input
 func In() Handle {
 	return windows.Stdin
 }
