@@ -94,7 +94,7 @@ func mains() error {
 	flag.Parse()
 
 	if *eOption == "" && len(flag.Args()) < 1 {
-		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
+		return fmt.Errorf("%[1]s %[2]s\nUsage: %[1]s xxxx.lua", os.Args[0], version)
 	}
 
 	if *colorOption == "never" {
@@ -138,6 +138,8 @@ func mains() error {
 	waitGroup.Wait()
 	return err
 }
+
+var version = "snapshot"
 
 func main() {
 	if err := mains(); err != nil {
