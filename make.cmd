@@ -8,6 +8,7 @@
 @exit /b
 
 :""
+    go fmt
     for /F %%I in ('git.exe describe --tags') do set "VERSION=%%I"
     go build -ldflags "-s -w -X main.version=%VERSION%"
     exit /b
