@@ -1,3 +1,7 @@
+v0.6.2
+------
+Feb.16,2022
+
 - Fix: filehandle for script was not closed when script did not end with CRLF
 - Show the version string
 
