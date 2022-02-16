@@ -1,5 +1,5 @@
 - Fix: filehandle for script was not closed when script did not end with CRLF
-- With no arguments, show the version string
+- Show the version string
 
 v0.6.1
 ------
