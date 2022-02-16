@@ -93,8 +93,10 @@ func mains() error {
 	}
 	flag.Parse()
 
+	fmt.Fprintf(os.Stderr, "expect.lua for Windows %s\n", version)
+
 	if *eOption == "" && len(flag.Args()) < 1 {
-		return fmt.Errorf("%[1]s %[2]s\nUsage: %[1]s xxxx.lua", os.Args[0], version)
+		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
 	}
 
 	if *colorOption == "never" {
@@ -139,7 +141,7 @@ func mains() error {
 	return err
 }
 
-var version = "snapshot"
+var version = ""
 
 func main() {
 	if err := mains(); err != nil {
