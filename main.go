@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"runtime"
 
 	"github.com/mattn/go-colorable"
 	"github.com/tidwall/transform"
@@ -93,7 +94,7 @@ func mains() error {
 	}
 	flag.Parse()
 
-	fmt.Fprintf(os.Stderr, "expect.lua for Windows %s\n", version)
+	fmt.Fprintf(os.Stderr, "expect.lua %s-windows-%s\n", version, runtime.GOARCH)
 
 	if *eOption == "" && len(flag.Args()) < 1 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
@@ -141,7 +142,7 @@ func mains() error {
 	return err
 }
 
-var version = ""
+var version = "snapshot"
 
 func main() {
 	if err := mains(); err != nil {
