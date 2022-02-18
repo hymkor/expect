@@ -12,9 +12,9 @@ import (
 	"runtime"
 
 	"github.com/mattn/go-colorable"
-	"github.com/tidwall/transform"
 	"github.com/yuin/gopher-lua"
 
+	"github.com/hymkor/expect/internal/filter"
 	"github.com/hymkor/expect/internal/go-console/input"
 )
 
@@ -59,26 +59,28 @@ func DoFileExceptForAtmarkLines(L *lua.LState, fname string) (err error) {
 
 	br := bufio.NewReader(fd)
 	keepComment := false
-	in := transform.NewTransformer(func() ([]byte, error) {
-		bin, err := br.ReadBytes('\n')
-		if err != nil {
-			fd.Close()
-			if err != io.EOF {
-				return nil, err
+	in := &filter.Reader{
+		In: func() ([]byte, error) {
+			bin, err := br.ReadBytes('\n')
+			if err != nil {
+				fd.Close()
+				if err != io.EOF {
+					return nil, err
+				}
 			}
-		}
-		if keepComment || (len(bin) > 0 && bin[0] == '@') {
-			rc := make([]byte, 0, len(bin)+2)
-			rc = append(rc, '-')
-			rc = append(rc, '-')
-			rc = append(rc, bin...)
+			if keepComment || (len(bin) > 0 && bin[0] == '@') {
+				rc := make([]byte, 0, len(bin)+2)
+				rc = append(rc, '-')
+				rc = append(rc, '-')
+				rc = append(rc, bin...)
 
-			trim := bytes.TrimRight(bin, "\r\n")
-			keepComment = len(trim) > 0 && bin[len(trim)-1] == '^'
-			return rc, err
-		}
-		return bin, err
-	})
+				trim := bytes.TrimRight(bin, "\r\n")
+				keepComment = len(trim) > 0 && bin[len(trim)-1] == '^'
+				return rc, err
+			}
+			return bin, err
+		},
+	}
 
 	f, err := L.Load(in, fname)
 	if err != nil {
