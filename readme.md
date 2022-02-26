@@ -5,7 +5,7 @@ Expect.lua for Windows
 
 - A tool like `expect` on Linux.
 - Scripts are to be written with Lua ([GopherLua](https://github.com/yuin/gopher-lua))
-- Some built-in functions exists:
+- These built-in functions exist:
     - `RC=expect(A,B,C...)` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
         - When A was found in cursor-line, RC=0
         - When B was found in cursor-line, RC=1
