@@ -65,7 +65,7 @@ logout
 Connection to example.com closed.
 ```
 
-The script embeded in the batchfile:
+The script embedded in the batchfile:
 
 ```sample.cmd
 @expect.exe "%~f0"
