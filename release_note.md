@@ -1,3 +1,6 @@
+- Use the default-background-color `ESC[49m` instead of black `ESC[40m`
+- Failed to call console-api, show API-name as error
+
 v0.6.2
 ------
 Feb.16,2022
