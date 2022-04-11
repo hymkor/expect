@@ -2,6 +2,7 @@ package consoleoutput
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"unsafe"
 
@@ -37,7 +38,7 @@ func readConsoleOutput(buffer []CharInfoT, size windows.Coord, coord windows.Coo
 		coordValue,
 		uintptr(unsafe.Pointer(read_region)))
 	if status == 0 {
-		return err
+		return fmt.Errorf("ReadConsoleOutputW: %w", err)
 	}
 	return nil
 }
@@ -55,7 +56,7 @@ func GetRecentOutput() (string, error) {
 	var screen windows.ConsoleScreenBufferInfo
 	err := windows.GetConsoleScreenBufferInfo(windows.Stdout, &screen)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("GetConsoleScreenBufferInfo: %w", err)
 	}
 
 	y := 0

@@ -1,6 +1,7 @@
 package consoleinput
 
 import (
+	"fmt"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -35,7 +36,7 @@ func (handle Handle) FlushConsoleInputBuffer() error {
 	if status != 0 {
 		return nil
 	} else {
-		return err
+		return fmt.Errorf("FlushConsoleInputBuffer: %s", err)
 	}
 }
 
@@ -48,7 +49,7 @@ func (handle Handle) GetNumberOfEvent() (int, error) {
 	if status != 0 {
 		return int(count), nil
 	} else {
-		return 0, err
+		return 0, fmt.Errorf("GetNumberOfConsoleInputEvents: %w", err)
 	}
 }
 
@@ -56,5 +57,8 @@ var waitForSingleObject = console.Kernel32.NewProc("WaitForSingleObject")
 
 func (handle Handle) WaitForSingleObject(msec uintptr) (uintptr, error) {
 	status, _, err := waitForSingleObject.Call(uintptr(handle), msec)
-	return status, err
+	if err != nil {
+		return status, fmt.Errorf("WaitForSingleObject: %w", err)
+	}
+	return status, nil
 }
