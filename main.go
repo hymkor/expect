@@ -19,10 +19,10 @@ import (
 )
 
 var (
-	escEcho  = "\x1B[40;31;1m"
-	escSend  = "\x1B[40;35;1m"
-	escSpawn = "\x1B[40;32;1m"
-	escEnd   = "\x1B[37;1m"
+	escEcho  = "\x1B[49;31;1m"
+	escSend  = "\x1B[49;35;1m"
+	escSpawn = "\x1B[49;32;1m"
+	escEnd   = "\x1B[49;39;1m"
 )
 
 var (
