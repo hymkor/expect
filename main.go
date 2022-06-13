@@ -26,9 +26,10 @@ var (
 )
 
 var (
-	eOption     = flag.String("e", "", "execute string")
-	xOption     = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
-	colorOption = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
+	eOption      = flag.String("e", "", "execute string")
+	xOption      = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
+	colorOption  = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
+	noLogoOption = flag.Bool("nologo", false, "do not show logo")
 )
 
 var conIn consoleinput.Handle
@@ -96,7 +97,9 @@ func mains() error {
 	}
 	flag.Parse()
 
-	fmt.Fprintf(os.Stderr, "expect.lua %s-windows-%s\n", version, runtime.GOARCH)
+	if !*noLogoOption {
+		fmt.Fprintf(os.Stderr, "expect.lua %s-windows-%s\n", version, runtime.GOARCH)
+	}
 
 	if *eOption == "" && len(flag.Args()) < 1 {
 		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
