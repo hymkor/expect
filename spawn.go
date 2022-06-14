@@ -29,7 +29,7 @@ func spawn(newCmd func(string, ...string) *exec.Cmd,
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
-		return 0, err
+		return 0, fmt.Errorf("spawn: %w", err)
 	}
 	waitGroup.Add(1)
 	pid := cmd.Process.Pid

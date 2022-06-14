@@ -21,7 +21,7 @@ func expect(ctx context.Context, keywords []string, timeover time.Duration) (int
 	for {
 		output, err := consoleoutput.GetRecentOutput()
 		if err != nil {
-			return -1, err
+			return -1, fmt.Errorf("expect: %w", err)
 		}
 		for i, str := range keywords {
 			if strings.Index(output, str) >= 0 {
@@ -30,9 +30,9 @@ func expect(ctx context.Context, keywords []string, timeover time.Duration) (int
 		}
 		select {
 		case <-ctx.Done():
-			return -1, ctx.Err()
+			return -1, fmt.Errorf("expect: %w", ctx.Err())
 		case <-timer.C:
-			return -1, context.DeadlineExceeded
+			return -1, fmt.Errorf("expect: %w", context.DeadlineExceeded)
 		case <-tick.C:
 		}
 	}
