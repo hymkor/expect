@@ -43,15 +43,6 @@ func readConsoleOutput(buffer []CharInfoT, size windows.Coord, coord windows.Coo
 	return nil
 }
 
-// for compatible
-func ReadConsoleOutput(buffer []CharInfoT, size Coord, coord Coord, read_region *SmallRect) error {
-	return readConsoleOutput(
-		buffer,
-		windows.Coord{int16(size.X()), int16(size.Y())},
-		windows.Coord{int16(coord.X()), int16(coord.Y())},
-		(*windows.SmallRect)(unsafe.Pointer(read_region)))
-}
-
 func GetRecentOutput() (string, error) {
 	var screen windows.ConsoleScreenBufferInfo
 	err := windows.GetConsoleScreenBufferInfo(windows.Stdout, &screen)
