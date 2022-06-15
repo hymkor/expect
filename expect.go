@@ -13,13 +13,29 @@ import (
 	"github.com/hymkor/expect/internal/go-console/output"
 )
 
+var useStderrOnGetRecentOutput = false
+
+func getRecentOutputByStdoutOrStderr() (string, error) {
+	for {
+		if useStderrOnGetRecentOutput {
+			result, err := consoleoutput.GetRecentOutputByStderr()
+			return result, err
+		}
+		result, err := consoleoutput.GetRecentOutput()
+		if err == nil {
+			return result, nil
+		}
+		useStderrOnGetRecentOutput = true
+	}
+}
+
 func expect(ctx context.Context, keywords []string, timeover time.Duration) (int, error) {
 	tick := time.NewTicker(time.Second / 10)
 	defer tick.Stop()
 	timer := time.NewTimer(timeover)
 	defer timer.Stop()
 	for {
-		output, err := consoleoutput.GetRecentOutput()
+		output, err := getRecentOutputByStdoutOrStderr()
 		if err != nil {
 			return -1, fmt.Errorf("expect: %w", err)
 		}
