@@ -1,6 +1,7 @@
 - Use the default-background-color `ESC[49m` instead of black `ESC[40m`
 - Failed to call console-api, show API-name as error
 - Add `-nologo` option
+- expect(): when the console of STDOUT can not be read, try STDERR.
 
 v0.6.2
 ------
