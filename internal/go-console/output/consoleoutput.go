@@ -26,13 +26,13 @@ const (
 
 var procReadConsoleOutput = console.Kernel32.NewProc("ReadConsoleOutputW")
 
-func readConsoleOutput(buffer []CharInfoT, size windows.Coord, coord windows.Coord, read_region *windows.SmallRect) error {
+func readConsoleOutput(handle windows.Handle, buffer []CharInfoT, size windows.Coord, coord windows.Coord, read_region *windows.SmallRect) error {
 
 	sizeValue := *(*uintptr)(unsafe.Pointer(&size))
 	coordValue := *(*uintptr)(unsafe.Pointer(&coord))
 
 	status, _, err := procReadConsoleOutput.Call(
-		uintptr(windows.Stdout),
+		uintptr(handle),
 		uintptr(unsafe.Pointer(&buffer[0])),
 		sizeValue,
 		coordValue,
@@ -43,9 +43,9 @@ func readConsoleOutput(buffer []CharInfoT, size windows.Coord, coord windows.Coo
 	return nil
 }
 
-func GetRecentOutput() (string, error) {
+func GetRecentOutputByHandle(handle windows.Handle) (string, error) {
 	var screen windows.ConsoleScreenBufferInfo
-	err := windows.GetConsoleScreenBufferInfo(windows.Stdout, &screen)
+	err := windows.GetConsoleScreenBufferInfo(handle, &screen)
 	if err != nil {
 		return "", fmt.Errorf("GetConsoleScreenBufferInfo: %w", err)
 	}
@@ -66,7 +66,7 @@ func GetRecentOutput() (string, error) {
 
 	home := &windows.Coord{}
 	charinfo := make([]CharInfoT, int(screen.Size.X)*int(screen.Size.Y))
-	err = readConsoleOutput(charinfo, screen.Size, *home, region)
+	err = readConsoleOutput(handle, charinfo, screen.Size, *home, region)
 	if err != nil {
 		return "", err
 	}
@@ -92,4 +92,12 @@ func GetRecentOutput() (string, error) {
 		}
 	}
 	return strings.TrimSpace(buffer.String()), nil
+}
+
+func GetRecentOutput() (string, error) {
+	return GetRecentOutputByHandle(windows.Stdout)
+}
+
+func GetRecentOutputByStderr() (string, error) {
+	return GetRecentOutputByHandle(windows.Stderr)
 }
