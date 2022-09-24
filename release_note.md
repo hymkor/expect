@@ -1,7 +1,11 @@
+Snapshot (not released)
+-----------------------
+
 - Use the default-background-color `ESC[49m` instead of black `ESC[40m`
 - Failed to call console-api, show API-name as error
 - Add `-nologo` option
 - expect(): when the console of STDOUT can not be read, try STDERR.
+- (#30) expect(): Set matching information into the global variables: `_MATCHPOSITION` , `_MATCHLINE` , `_MATCH` , `_PREMATCH`, and `_POSTMATCH`.
 
 v0.6.2
 ------
