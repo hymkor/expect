@@ -1,5 +1,6 @@
-Snapshot (not released)
------------------------
+v0.7.0
+------
+Sep.25,2022
 
 - Use the default-background-color `ESC[49m` instead of black `ESC[40m`
 - Failed to call console-api, show API-name as error
