@@ -16,6 +16,12 @@ Expect.lua for Windows
         - :
         - When error occured, RC=-1
         - When timeout occurs, RC=-2 (set variable like `timeout=(SECONDS)`,default 1 hour)
+        - When RC &gt;= 0, these global variables are set.
+            - `_MATCH` - The string matched.
+            - `_MATCHPOSITION` - The position where matched.
+            - `_MATCHLINE` - The matched whole line.
+            - `_PREMATCH` - The string preceding matched.
+            - `_POSTMATCH` - The string following matched.
     - `send(TEXT)` sends TEXT to the terminal as keyboard events.
         - `send(TEXT,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
     - `sendln()` is same as send() but append CR.
