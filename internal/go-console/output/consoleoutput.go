@@ -49,7 +49,7 @@ func GetRecentOutputByHandle(handle windows.Handle, height int) ([]string, error
 		return nil, fmt.Errorf("GetConsoleScreenBufferInfo: %w", err)
 	}
 
-	top := int(screen.CursorPosition.Y) - height
+	top := int(screen.CursorPosition.Y) - (height - 1)
 	if top < 0 {
 		top = 0
 	}
@@ -93,10 +93,10 @@ func GetRecentOutputByHandle(handle windows.Handle, height int) ([]string, error
 	return lines, nil
 }
 
-func GetRecentOutput() ([]string, error) {
-	return GetRecentOutputByHandle(windows.Stdout, 1)
+func GetRecentOutputByStdout(height int) ([]string, error) {
+	return GetRecentOutputByHandle(windows.Stdout, height)
 }
 
-func GetRecentOutputByStderr() ([]string, error) {
-	return GetRecentOutputByHandle(windows.Stderr, 1)
+func GetRecentOutputByStderr(height int) ([]string, error) {
+	return GetRecentOutputByHandle(windows.Stderr, height)
 }

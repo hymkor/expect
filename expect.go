@@ -18,10 +18,10 @@ var useStderrOnGetRecentOutput = false
 func getRecentOutputByStdoutOrStderr() ([]string, error) {
 	for {
 		if useStderrOnGetRecentOutput {
-			result, err := consoleoutput.GetRecentOutputByStderr()
+			result, err := consoleoutput.GetRecentOutputByStderr(2)
 			return result, err
 		}
-		result, err := consoleoutput.GetRecentOutput()
+		result, err := consoleoutput.GetRecentOutputByStdout(2)
 		if err == nil {
 			return result, nil
 		}
