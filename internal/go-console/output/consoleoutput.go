@@ -1,7 +1,6 @@
 package consoleoutput
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
 	"unsafe"
@@ -43,11 +42,11 @@ func readConsoleOutput(handle windows.Handle, buffer []CharInfoT, size windows.C
 	return nil
 }
 
-func GetRecentOutputByHandle(handle windows.Handle, height int) (string, error) {
+func GetRecentOutputByHandle(handle windows.Handle, height int) ([]string, error) {
 	var screen windows.ConsoleScreenBufferInfo
 	err := windows.GetConsoleScreenBufferInfo(handle, &screen)
 	if err != nil {
-		return "", fmt.Errorf("GetConsoleScreenBufferInfo: %w", err)
+		return nil, fmt.Errorf("GetConsoleScreenBufferInfo: %w", err)
 	}
 
 	top := int(screen.CursorPosition.Y) - height
@@ -66,11 +65,12 @@ func GetRecentOutputByHandle(handle windows.Handle, height int) (string, error) 
 	charinfo := make([]CharInfoT, int(screen.Size.X)*int(screen.Size.Y))
 	err = readConsoleOutput(handle, charinfo, screen.Size, *home, region)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	var buffer bytes.Buffer
+	lines := []string{}
 	for i := 0; i < int(screen.Size.Y); i++ {
+		var buffer strings.Builder
 		for j := 0; j < int(screen.Size.X); j++ {
 			p := &charinfo[i*int(screen.Size.X)+j]
 			if (p.Attributes & COMMON_LVB_TRAILING_BYTE) != 0 {
@@ -88,14 +88,15 @@ func GetRecentOutputByHandle(handle windows.Handle, height int) (string, error) 
 				}
 			}
 		}
+		lines = append(lines, strings.TrimSpace(buffer.String()))
 	}
-	return strings.TrimSpace(buffer.String()), nil
+	return lines, nil
 }
 
-func GetRecentOutput() (string, error) {
+func GetRecentOutput() ([]string, error) {
 	return GetRecentOutputByHandle(windows.Stdout, 1)
 }
 
-func GetRecentOutputByStderr() (string, error) {
+func GetRecentOutputByStderr() ([]string, error) {
 	return GetRecentOutputByHandle(windows.Stderr, 1)
 }

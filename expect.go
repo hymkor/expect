@@ -15,7 +15,7 @@ import (
 
 var useStderrOnGetRecentOutput = false
 
-func getRecentOutputByStdoutOrStderr() (string, error) {
+func getRecentOutputByStdoutOrStderr() ([]string, error) {
 	for {
 		if useStderrOnGetRecentOutput {
 			result, err := consoleoutput.GetRecentOutputByStderr()
@@ -29,26 +29,42 @@ func getRecentOutputByStdoutOrStderr() (string, error) {
 	}
 }
 
-func expect(ctx context.Context, keywords []string, timeover time.Duration) (int, error) {
+type Matching struct {
+	Position  int
+	Line      string
+	Match     string
+	PreMatch  string
+	PostMatch string
+}
+
+func expect(ctx context.Context, keywords []string, timeover time.Duration) (int, *Matching, error) {
 	tick := time.NewTicker(time.Second / 10)
 	defer tick.Stop()
 	timer := time.NewTimer(timeover)
 	defer timer.Stop()
 	for {
-		output, err := getRecentOutputByStdoutOrStderr()
+		outputs, err := getRecentOutputByStdoutOrStderr()
 		if err != nil {
-			return -1, fmt.Errorf("expect: %w", err)
+			return -1, nil, fmt.Errorf("expect: %w", err)
 		}
-		for i, str := range keywords {
-			if strings.Index(output, str) >= 0 {
-				return i, nil
+		for _, output := range outputs {
+			for i, str := range keywords {
+				if pos := strings.Index(output, str); pos >= 0 {
+					return i, &Matching{
+						Position:  pos,
+						Line:      output,
+						Match:     output[pos : pos+len(str)],
+						PreMatch:  output[:pos],
+						PostMatch: output[pos+len(str):],
+					}, nil
+				}
 			}
 		}
 		select {
 		case <-ctx.Done():
-			return -1, fmt.Errorf("expect: %w", ctx.Err())
+			return -1, nil, fmt.Errorf("expect: %w", ctx.Err())
 		case <-timer.C:
-			return -1, fmt.Errorf("expect: %w", context.DeadlineExceeded)
+			return -1, nil, fmt.Errorf("expect: %w", context.DeadlineExceeded)
 		case <-tick.C:
 		}
 	}
@@ -72,7 +88,7 @@ func Expect(L *lua.LState) int {
 	if n, ok := L.GetGlobal("timeout").(lua.LNumber); ok {
 		timeout = time.Duration(n) * time.Second
 	}
-	rc, err := expect(L.Context(), keywords, timeout)
+	rc, info, err := expect(L.Context(), keywords, timeout)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
 			rc = errnoExpectContextDone
@@ -83,6 +99,11 @@ func Expect(L *lua.LState) int {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}
+	L.SetGlobal("_MATCHPOSITION", lua.LNumber(info.Position))
+	L.SetGlobal("_MATCHLINE", lua.LString(info.Line))
+	L.SetGlobal("_MATCH", lua.LString(info.Match))
+	L.SetGlobal("_PREMATCH", lua.LString(info.PreMatch))
+	L.SetGlobal("_POSTMATCH", lua.LString(info.PostMatch))
 	L.Push(lua.LNumber(rc))
 	return 1
 }
