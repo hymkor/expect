@@ -43,25 +43,23 @@ func readConsoleOutput(handle windows.Handle, buffer []CharInfoT, size windows.C
 	return nil
 }
 
-func GetRecentOutputByHandle(handle windows.Handle) (string, error) {
+func GetRecentOutputByHandle(handle windows.Handle, height int) (string, error) {
 	var screen windows.ConsoleScreenBufferInfo
 	err := windows.GetConsoleScreenBufferInfo(handle, &screen)
 	if err != nil {
 		return "", fmt.Errorf("GetConsoleScreenBufferInfo: %w", err)
 	}
 
-	y := 0
-	h := 1
-	if screen.CursorPosition.Y >= 1 {
-		y = int(screen.CursorPosition.Y - 1)
-		h++
+	top := int(screen.CursorPosition.Y) - height
+	if top < 0 {
+		top = 0
 	}
 
 	region := &windows.SmallRect{
 		Left:   0,
-		Top:    int16(y),
+		Top:    int16(top),
 		Right:  int16(screen.Size.X),
-		Bottom: int16(y + h - 1),
+		Bottom: int16(screen.CursorPosition.Y),
 	}
 
 	home := &windows.Coord{}
@@ -95,9 +93,9 @@ func GetRecentOutputByHandle(handle windows.Handle) (string, error) {
 }
 
 func GetRecentOutput() (string, error) {
-	return GetRecentOutputByHandle(windows.Stdout)
+	return GetRecentOutputByHandle(windows.Stdout, 1)
 }
 
 func GetRecentOutputByStderr() (string, error) {
-	return GetRecentOutputByHandle(windows.Stderr)
+	return GetRecentOutputByHandle(windows.Stderr, 1)
 }
