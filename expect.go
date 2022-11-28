@@ -99,11 +99,19 @@ func Expect(L *lua.LState) int {
 			fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}
-	L.SetGlobal("_MATCHPOSITION", lua.LNumber(info.Position))
-	L.SetGlobal("_MATCHLINE", lua.LString(info.Line))
-	L.SetGlobal("_MATCH", lua.LString(info.Match))
-	L.SetGlobal("_PREMATCH", lua.LString(info.PreMatch))
-	L.SetGlobal("_POSTMATCH", lua.LString(info.PostMatch))
+	if info != nil {
+		L.SetGlobal("_MATCHPOSITION", lua.LNumber(info.Position))
+		L.SetGlobal("_MATCHLINE", lua.LString(info.Line))
+		L.SetGlobal("_MATCH", lua.LString(info.Match))
+		L.SetGlobal("_PREMATCH", lua.LString(info.PreMatch))
+		L.SetGlobal("_POSTMATCH", lua.LString(info.PostMatch))
+	} else {
+		L.SetGlobal("_MATCHPOSITION", lua.LNil)
+		L.SetGlobal("_MATCHLINE", lua.LNil)
+		L.SetGlobal("_MATCH", lua.LNil)
+		L.SetGlobal("_PREMATCH", lua.LNil)
+		L.SetGlobal("_POSTMATCH", lua.LNil)
+	}
 	L.Push(lua.LNumber(rc))
 	return 1
 }
