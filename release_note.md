@@ -1,3 +1,5 @@
+- (#31) Fix: expect() crashed on timeout
+
 v0.7.0
 ------
 Sep.25,2022
