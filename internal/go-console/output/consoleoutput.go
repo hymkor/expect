@@ -89,7 +89,7 @@ func GetRecentOutputByHandle(handle windows.Handle, height int) ([]string, error
 				}
 			}
 		}
-		lines[i] = strings.TrimSpace(buffer.String())
+		lines[i] = strings.TrimRight(buffer.String(), " \r\n\t\v\f")
 	}
 	return lines, nil
 }
