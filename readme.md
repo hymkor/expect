@@ -42,6 +42,12 @@ Install
 
 Download the binary package from [Releases](https://github.com/hymkor/expect/releases) and extract the executable.
 
+### for scoop-installer
+
+```
+scoop install https://raw.githubusercontent.com/hymkor/expect/master/expect.json
+```
+
 Sample
 ------
 
