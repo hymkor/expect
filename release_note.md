@@ -1,3 +1,9 @@
+v0.8.0
+------
+Dec.25,2022
+
+- Add the new function: shot(N) that reads N-lines from the console buffer.
+
 v0.7.1
 ------
 Nov.29,2022

@@ -36,6 +36,14 @@ Expect.lua for Windows
     - `kill(PROCESS-ID)` kills the process. (v0.4.0~)
     - `spawnctx(NAME,ARG1,ARG2,...)` is similar with spawn() but the process started by spawnctx is killed automatically when Ctrl-C is pressed. (v0.5.0~)
     - `wait(PID)` waits the process of PID terminates.
+    - `shot(N)` reads N-lines from the console buffer and returns them. (v0.8.0~)
+
+``` lua
+local screen = assert(shot(25))
+for i = 1,#screen do
+    print( i,screen[i] )
+end
+```
 
 Install
 -------
