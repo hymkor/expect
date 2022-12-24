@@ -68,8 +68,9 @@ func GetRecentOutputByHandle(handle windows.Handle, height int) ([]string, error
 		return nil, err
 	}
 
-	lines := make([]string, 0, screen.Size.Y)
-	for i := 0; i < int(screen.Size.Y); i++ {
+	nlines := int(region.Bottom - region.Top + 1)
+	lines := make([]string, nlines)
+	for i := 0; i < nlines; i++ {
 		var buffer strings.Builder
 		for j := 0; j < int(screen.Size.X); j++ {
 			p := &charinfo[i*int(screen.Size.X)+j]
@@ -88,7 +89,7 @@ func GetRecentOutputByHandle(handle windows.Handle, height int) ([]string, error
 				}
 			}
 		}
-		lines = append(lines, strings.TrimSpace(buffer.String()))
+		lines[i] = strings.TrimSpace(buffer.String())
 	}
 	return lines, nil
 }
