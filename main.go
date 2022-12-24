@@ -127,6 +127,7 @@ func mains() error {
 	L.SetGlobal("spawnctx", L.NewFunction(SpawnContext))
 	L.SetGlobal("kill", L.NewFunction(Kill))
 	L.SetGlobal("wait", L.NewFunction(Wait))
+	L.SetGlobal("shot", L.NewFunction(Shot))
 
 	table := L.NewTable()
 	for i, s := range flag.Args() {
