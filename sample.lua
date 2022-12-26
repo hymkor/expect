@@ -6,7 +6,7 @@ local account = arg[1]
 local password = arg[2]
 local sshexe = os.getenv("windir") .. "\\System32\\OpenSSH\\ssh.exe"
 
-spawn(sshexe,"-i","22",account)
+spawn(sshexe,"-p","22",account)
 timeout = 10
 
 while true do

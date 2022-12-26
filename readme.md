@@ -62,7 +62,7 @@ Sample
 sample.lua:
 
 ``` lua
-if #arg < 1 then
+if #arg < 2 then
     print("expect.exe sample.lua USERNAME@DOMAIN PASSWD")
     os.exit(0)
 end
@@ -70,7 +70,7 @@ local account = arg[1]
 local password = arg[2]
 local sshexe = os.getenv("windir") .. "\\System32\\OpenSSH\\ssh.exe"
 
-spawn(sshexe,"-i","22",account)
+spawn(sshexe,"-p","22",account)
 timeout = 10
 
 while true do
@@ -102,10 +102,9 @@ On the command prompt:
 
 ```console
 $ .\expect sample.lua example@example.com PASSW0RD
-expect.lua v0.8.0-4-gf043907-windows-amd64
-Warning: Identity file 22 not accessible: No such file or directory.
+Expect-lua v0.8.0-6-g456fe3e-windows-amd64
 example@example.com's password:
-Last login: Mon Dec 26 22:47:24 2022 from XXXXXXXX-XXXXX.XXXX.XX.XXX.XXX.XXX.XX.XX
+Last login: Mon Dec 26 23:18:11 2022 from XXXXXXXX-XXXXX.XXXX.XX.XXX.XXX.XXX.XX.XX
 FreeBSD 9.1-RELEASE-p24 (XXXXXXXX) #0: Thu Feb  5 10:03:29 JST 2015
 
 Welcome to FreeBSD!
@@ -113,6 +112,7 @@ Welcome to FreeBSD!
 [example@XXXXXXX ~]$ exit
 logout
 Connection to example.com closed.
+$
 ```
 
 The script embedded in the batchfile:
