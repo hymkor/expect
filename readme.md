@@ -1,6 +1,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/hymkor/expect)](https://goreportcard.com/report/github.com/hymkor/expect)
 
-Expect.lua for Windows
+Expect-lua for Windows
 ======================
 
 - A tool like `expect` on Linux.
@@ -8,7 +8,7 @@ Expect.lua for Windows
     - The reference manuals of Lua 5.1 exist in the Lua official site.  
         Please see [https://www.lua.org/docs.html](https://www.lua.org/docs.html)
     - Except.lua uses [GopherLua](https://github.com/yuin/gopher-lua) as the VM for Lua.
-- These functions are extended in Expect.lua
+- These functions are extended in Expect-lua
     - `RC=expect(A,B,C...)` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
         - When A was found in cursor-line, RC=0
         - When B was found in cursor-line, RC=1
