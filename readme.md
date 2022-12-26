@@ -53,7 +53,7 @@ Download the binary package from [Releases](https://github.com/hymkor/expect/rel
 ### for scoop-installer
 
 ```
-scoop install https://raw.githubusercontent.com/hymkor/expect/master/expect.json
+scoop install https://raw.githubusercontent.com/hymkor/expect/master/expect-lua.json
 ```
 
 Sample
