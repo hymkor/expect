@@ -1,3 +1,5 @@
+- Add the new global variable: capturelines (default:2)
+
 v0.8.0
 ------
 Dec.25,2022
