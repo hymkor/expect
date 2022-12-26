@@ -61,29 +61,56 @@ Sample
 
 sample.lua:
 
-```sample.lua
-echo(true)
-if spawn([[c:\Program Files\Git\usr\bin\ssh.exe]],"foo@example.com") then
-    expect("password:")
-    echo(false)
-    send("PASSWORD\r")
-    expect("~]$")
-    echo(true)
-    send("exit\r")
+``` lua
+if #arg < 1 then
+    print("expect.exe sample.lua USERNAME@DOMAIN PASSWD")
+    os.exit(0)
+end
+local account = arg[1]
+local password = arg[2]
+local sshexe = os.getenv("windir") .. "\\System32\\OpenSSH\\ssh.exe"
+
+spawn(sshexe,"-i","22",account)
+timeout = 10
+
+while true do
+    local rc = expect(
+    "Are you sure you want to continue connecting (yes/no/[fingerprint])?",
+    "password:")
+
+    if rc == 0 then
+        sendln("yes")
+    elseif rc == 1 then
+        sendln(password)
+        rc = expect("~]$")
+        if rc == 0 then
+            sendln("exit")
+        end
+        break
+    else
+        if _MATCH then
+            echo(string.format("Error keyword found \"%s\". Exit",_MATCH))
+        else
+            echo("TIMEOUT")
+        end
+        break
+    end
 end
 ```
 
 On the command prompt:
 
 ```console
-$ expect.exe sample.lua
-foo@example.com's password:
-Last login: Thu Jun 15 13:21:57 2017 from XXXXXXXXXXXX.XXXX.XX.XXX.XXX.XXXXXXX.XX.XX
+$ .\expect sample.lua example@example.com PASSW0RD
+expect.lua v0.8.0-4-gf043907-windows-amd64
+Warning: Identity file 22 not accessible: No such file or directory.
+example@example.com's password:
+Last login: Mon Dec 26 22:47:24 2022 from XXXXXXXX-XXXXX.XXXX.XX.XXX.XXX.XXX.XX.XX
 FreeBSD 9.1-RELEASE-p24 (XXXXXXXX) #0: Thu Feb  5 10:03:29 JST 2015
 
 Welcome to FreeBSD!
 
-[foo@XXXXXXX ~]$ exit
+[example@XXXXXXX ~]$ exit
 logout
 Connection to example.com closed.
 ```
