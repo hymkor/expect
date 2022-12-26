@@ -98,7 +98,7 @@ func mains() error {
 	flag.Parse()
 
 	if !*noLogoOption {
-		fmt.Fprintf(os.Stderr, "expect.lua %s-windows-%s\n", version, runtime.GOARCH)
+		fmt.Fprintf(os.Stderr, "Expect-lua %s-windows-%s\n", version, runtime.GOARCH)
 	}
 
 	if *eOption == "" && len(flag.Args()) < 1 {
