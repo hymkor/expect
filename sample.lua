@@ -8,21 +8,23 @@ local sshexe = os.getenv("windir") .. "\\System32\\OpenSSH\\ssh.exe"
 
 spawn(sshexe,"-p","22",account)
 timeout = 10
+capturelines = 3 -- default is 2
 
 while true do
     local rc = expect(
+    "password:",
     "Are you sure you want to continue connecting (yes/no/[fingerprint])?",
-    "password:")
-
+    "Could not resolve hostname")
     if rc == 0 then
-        sendln("yes")
-    elseif rc == 1 then
         sendln(password)
         rc = expect("~]$")
         if rc == 0 then
             sendln("exit")
         end
         break
+    elseif rc == 1 then
+        sendln("yes")
+        print() -- move cursor down not to capture same keyword
     else
         if _MATCH then
             echo(string.format("Error keyword found \"%s\". Exit",_MATCH))
