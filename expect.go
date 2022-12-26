@@ -15,13 +15,13 @@ import (
 
 var useStderrOnGetRecentOutput = false
 
-func getRecentOutputByStdoutOrStderr() ([]string, error) {
+func getRecentOutputByStdoutOrStderr(captureLines int) ([]string, error) {
 	for {
 		if useStderrOnGetRecentOutput {
-			result, err := consoleoutput.GetRecentOutputByStderr(2)
+			result, err := consoleoutput.GetRecentOutputByStderr(captureLines)
 			return result, err
 		}
-		result, err := consoleoutput.GetRecentOutputByStdout(2)
+		result, err := consoleoutput.GetRecentOutputByStdout(captureLines)
 		if err == nil {
 			return result, nil
 		}
@@ -37,13 +37,13 @@ type Matching struct {
 	PostMatch string
 }
 
-func expect(ctx context.Context, keywords []string, timeover time.Duration) (int, *Matching, error) {
+func expect(ctx context.Context, keywords []string, timeover time.Duration, captureLines int) (int, *Matching, error) {
 	tick := time.NewTicker(time.Second / 10)
 	defer tick.Stop()
 	timer := time.NewTimer(timeover)
 	defer timer.Stop()
 	for {
-		outputs, err := getRecentOutputByStdoutOrStderr()
+		outputs, err := getRecentOutputByStdoutOrStderr(captureLines)
 		if err != nil {
 			return -1, nil, fmt.Errorf("expect: %w", err)
 		}
@@ -88,7 +88,12 @@ func Expect(L *lua.LState) int {
 	if n, ok := L.GetGlobal("timeout").(lua.LNumber); ok {
 		timeout = time.Duration(n) * time.Second
 	}
-	rc, info, err := expect(L.Context(), keywords, timeout)
+	captureLines := 2
+	if n, ok := L.GetGlobal("capturelines").(lua.LNumber); ok {
+		captureLines = int(n)
+	}
+
+	rc, info, err := expect(L.Context(), keywords, timeout, captureLines)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
 			rc = errnoExpectContextDone
