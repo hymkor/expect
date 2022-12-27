@@ -50,3 +50,7 @@
         echo TEST SUCCEEDED
     )
     exit /b
+
+:"manifest"
+    go run mkmanifest.go -inline "{\"bin\":\"expect.exe\"}" hymkor expect expect-v*.zip > expect-lua.json
+    exit /b
