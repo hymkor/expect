@@ -49,6 +49,18 @@ func Sleep(L *lua.LState) int {
 	return 1
 }
 
+func USleep(L *lua.LState) int {
+	value, ok := L.Get(-1).(lua.LNumber)
+	if !ok {
+		L.Push(lua.LNil)
+		L.Push(lua.LString("Expect a number as the first argument"))
+		return 2
+	}
+	time.Sleep(time.Microsecond * time.Duration(value))
+	L.Push(lua.LTrue)
+	return 1
+}
+
 // Echo is the implement of the lua-function `echo`
 func Echo(L *lua.LState) int {
 	value := L.Get(-1)
@@ -142,6 +154,7 @@ func mains() error {
 	L.SetGlobal("wait", L.NewFunction(Wait))
 	L.SetGlobal("shot", L.NewFunction(Shot))
 	L.SetGlobal("sleep", L.NewFunction(Sleep))
+	L.SetGlobal("usleep", L.NewFunction(USleep))
 
 	table := L.NewTable()
 	for i, s := range flag.Args() {
