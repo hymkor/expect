@@ -9,7 +9,7 @@ Expect-lua for Windows
         Please see [https://www.lua.org/docs.html](https://www.lua.org/docs.html)
     - Expect-lua uses [GopherLua](https://github.com/yuin/gopher-lua) as the VM for Lua.
 - These functions are extended in Expect-lua
-    - `RC=expect(A,B,C...)` accesses CONOUT$ directly and watches the cursor-line (0.1 seconds interval)
+    - `RC=expect(A,B,C...)` accesses CONOUT$ directly and watches the cursor-line and abobe N-lines (N+1 can be set by `capturelines`:default is 2) (0.1 seconds interval)
         - When A was found in cursor-line, RC=0
         - When B was found in cursor-line, RC=1
         - When C was found in cursor-line, RC=2
@@ -37,6 +37,8 @@ Expect-lua for Windows
     - `spawnctx(NAME,ARG1,ARG2,...)` is similar with spawn() but the process started by spawnctx is killed automatically when Ctrl-C is pressed. (v0.5.0~)
     - `wait(PID)` waits the process of PID terminates.
     - `shot(N)` reads N-lines from the console buffer and returns them. (v0.8.0~)
+    - `sleep(N)` sleeps N-seconds. (v0.9.0~)
+    - `usleep(MICROSECOND)` sleep N-micrseconds. (v0.9.0~)
 
 ``` lua
 local screen = assert(shot(25))

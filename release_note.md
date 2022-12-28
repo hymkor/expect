@@ -1,3 +1,7 @@
+v0.9.0
+------
+Dec.28,2022
+
 - Add the new global variable: capturelines (default:2)
 - Add the new function: sleep(SECOND),usleep(MICROSECOND)
 
