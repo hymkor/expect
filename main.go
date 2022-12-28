@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"time"
 
 	"github.com/mattn/go-colorable"
 	"github.com/yuin/gopher-lua"
@@ -35,6 +36,18 @@ var (
 var conIn consoleinput.Handle
 var output = colorable.NewColorableStdout()
 var echo = io.Discard
+
+func Sleep(L *lua.LState) int {
+	value, ok := L.Get(-1).(lua.LNumber)
+	if !ok {
+		L.Push(lua.LNil)
+		L.Push(lua.LString("Expect a number as the first argument"))
+		return 2
+	}
+	time.Sleep(time.Second * time.Duration(value))
+	L.Push(lua.LTrue)
+	return 1
+}
 
 // Echo is the implement of the lua-function `echo`
 func Echo(L *lua.LState) int {
@@ -128,6 +141,7 @@ func mains() error {
 	L.SetGlobal("kill", L.NewFunction(Kill))
 	L.SetGlobal("wait", L.NewFunction(Wait))
 	L.SetGlobal("shot", L.NewFunction(Shot))
+	L.SetGlobal("sleep", L.NewFunction(Sleep))
 
 	table := L.NewTable()
 	for i, s := range flag.Args() {
