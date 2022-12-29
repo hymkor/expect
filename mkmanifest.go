@@ -5,6 +5,7 @@ package main
 
 import (
 	"archive/zip"
+	"bufio"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
@@ -13,7 +14,9 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -150,12 +153,69 @@ func listUpExeInZip(fname string) ([]string, error) {
 	return names, nil
 }
 
-func mains(args []string) error {
-	if len(args) < 3 {
-		return errors.New("Usage: go run mkmanifest.go USER REPO ZIP1...")
+func quote(args []string, f func(string) error) error {
+	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	r, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
 	}
-	name := args[0]
-	repo := args[1]
+	defer r.Close()
+	cmd.Start()
+
+	sc := bufio.NewScanner(r)
+	for sc.Scan() {
+		//println(sc.Text())
+		if err := f(sc.Text()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func listUpRemoteBranch() ([]string, error) {
+	branches := []string{}
+	quote([]string{"git", "remote", "show"}, func(line string) error {
+		branches = append(branches, strings.TrimSpace(line))
+		return nil
+	})
+	return branches, nil
+}
+
+var rxURL = regexp.MustCompile(`Push +URL: \w+@github.com:(\w+)/(\w+).git`)
+
+func getNameAndRepo() (string, string, error) {
+	branch, err := listUpRemoteBranch()
+	if err != nil {
+		return "", "", err
+	}
+	if len(branch) < 1 {
+		return "", "", errors.New("remote branch not found")
+	}
+	var user, repo string
+	quote([]string{"git", "remote", "show", "-n", branch[0]}, func(line string) error {
+		m := rxURL.FindStringSubmatch(line)
+		if m != nil {
+			user = m[1]
+			repo = m[2]
+			return io.EOF
+		}
+		return nil
+	})
+	return user, repo, nil
+}
+
+func mains(args []string) error {
+	name, repo, err := getNameAndRepo()
+	if err != nil {
+		return err
+	}
+	if name == "" || repo == "" {
+		return errors.New("getNameAndRepo: can not find remote repository")
+	}
+	//println("name:", name)
+	//println("repo:", repo)
 
 	releases, err := getReleases(name, repo)
 	if err != nil {
@@ -165,7 +225,7 @@ func mains(args []string) error {
 	var url, tag string
 
 	var binfiles = map[string]struct{}{}
-	for _, arg1 := range args[2:] {
+	for _, arg1 := range args {
 		files, err := filepath.Glob(arg1)
 		if err != nil {
 			files = []string{arg1}
