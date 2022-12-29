@@ -4,6 +4,7 @@
 package main
 
 import (
+	"archive/zip"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
@@ -87,7 +88,7 @@ type Manifest struct {
 	Homepage     string                  `json:"homepage,omitempty"`
 	License      string                  `json:"license,omitempty"`
 	Archtectures map[string]*Archtecture `json:"architecture"`
-	Bin          string                  `json:"bin"`
+	Bin          []string                `json:"bin"`
 	CheckVer     map[string]string       `json:"checkver"`
 	AutoUpdate   AutoUpdate              `json:"autoupdate"`
 }
@@ -131,6 +132,24 @@ func getDescription(user, repo string) (*Description, error) {
 
 var flagInlineTemplate = flag.String("inline", "", "Set template inline")
 
+var flagStdinTemplate = flag.Bool("stdin", false, "Read template from stdin")
+
+func listUpExeInZip(fname string) ([]string, error) {
+	zr, err := zip.OpenReader(fname)
+	if err != nil {
+		return nil, err
+	}
+	defer zr.Close()
+
+	names := make([]string, 0)
+	for _, f := range zr.File {
+		if strings.EqualFold(filepath.Ext(f.Name), ".exe") {
+			names = append(names, f.Name)
+		}
+	}
+	return names, nil
+}
+
 func mains(args []string) error {
 	if len(args) < 3 {
 		return errors.New("Usage: go run mkmanifest.go USER REPO ZIP1...")
@@ -144,6 +163,8 @@ func mains(args []string) error {
 	}
 	arch := make(map[string]*Archtecture)
 	var url, tag string
+
+	var binfiles = map[string]struct{}{}
 	for _, arg1 := range args[2:] {
 		files, err := filepath.Glob(arg1)
 		if err != nil {
@@ -166,20 +187,36 @@ func mains(args []string) error {
 				Url:  url,
 				Hash: hash,
 			}
+			if strings.EqualFold(filepath.Ext(fname), ".zip") {
+				if exefiles, err := listUpExeInZip(fname); err == nil {
+					for _, fn := range exefiles {
+						binfiles[fn] = struct{}{}
+					}
+				}
+			}
 		}
 	}
+
 	var input []byte
+
 	if *flagInlineTemplate != "" {
 		input = []byte(*flagInlineTemplate)
-	} else {
+	} else if *flagStdinTemplate {
 		input, err = io.ReadAll(os.Stdin)
 		if err != nil && err != io.EOF {
 			return err
 		}
 	}
 	var manifest Manifest
-	if err = json.Unmarshal(input, &manifest); err != nil {
-		return err
+	if input != nil {
+		if err = json.Unmarshal(input, &manifest); err != nil {
+			return err
+		}
+	}
+	if binfiles != nil {
+		for exe := range binfiles {
+			manifest.Bin = append(manifest.Bin, exe)
+		}
 	}
 	if manifest.Archtectures == nil {
 		manifest.Archtectures = make(map[string]*Archtecture)

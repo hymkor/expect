@@ -13,7 +13,9 @@
             "hash": "658ab5ca275b49c09796cefc653cf7580b2790cc7205e904eba592428931c11c"
         }
     },
-    "bin": "expect.exe",
+    "bin": [
+        "expect.exe"
+    ],
     "checkver": {
         "github": "https://github.com/hymkor/expect",
         "regex": "tag/([\\d\\._]+)"
