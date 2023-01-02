@@ -1,16 +1,16 @@
 {
-    "version": "0.9.0",
+    "version": "0.10.0",
     "description": "Expect-lua for Windows",
     "homepage": "https://github.com/hymkor/expect",
     "license": "MIT License",
     "architecture": {
         "32bit": {
-            "url": "https://github.com/hymkor/expect/releases/download/v0.9.0/expect-v0.9.0-386.zip",
-            "hash": "a7b41c5d47b5f13b1ab524f6f5d0863c5ece9062f5dc49782e5a3759e4ca17d1"
+            "url": "https://github.com/hymkor/expect/releases/download/v0.10.0/expect-v0.10.0-386.zip",
+            "hash": "77068d96f2bf022aa238b4c5b00c0509296fca7e96623a045c3dd1c0bb1527f5"
         },
         "64bit": {
-            "url": "https://github.com/hymkor/expect/releases/download/v0.9.0/expect-v0.9.0-amd64.zip",
-            "hash": "658ab5ca275b49c09796cefc653cf7580b2790cc7205e904eba592428931c11c"
+            "url": "https://github.com/hymkor/expect/releases/download/v0.10.0/expect-v0.10.0-amd64.zip",
+            "hash": "dcd152eaf8b540f432e25467ef648390b850b725d0757485769f77962bebf217"
         }
     },
     "bin": [
