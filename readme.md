@@ -33,12 +33,19 @@ Expect-lua for Windows
         - `echo(false)`: echo off
         - `echo("...")`: print a string
     - `arg[]` contains commandline arguments (`arg[0]` is scriptname)
-    - `kill(PROCESS-ID)` kills the process. (v0.4.0~)
-    - `spawnctx(NAME,ARG1,ARG2,...)` is similar with spawn() but the process started by spawnctx is killed automatically when Ctrl-C is pressed. (v0.5.0~)
+    - `kill(PROCESS-ID)` kills the process. (since v0.4.0)
+    - `spawnctx(NAME,ARG1,ARG2,...)` is similar with spawn() but the process started by spawnctx is killed automatically when Ctrl-C is pressed. (since v0.5.0)
     - `wait(PID)` waits the process of PID terminates.
-    - `shot(N)` reads N-lines from the console buffer and returns them. (v0.8.0~)
-    - `sleep(N)` sleeps N-seconds. (v0.9.0~)
-    - `usleep(MICROSECOND)` sleep N-micrseconds. (v0.9.0~)
+    - `shot(N)` reads N-lines from the console buffer and returns them. (since v0.8.0)
+    - `sleep(N)` sleeps N-seconds. (since v0.9.0)
+    - `usleep(MICROSECOND)` sleep N-micrseconds. (since v0.9.0)
+    - `local OBJ=create_object()` creates OLE-Object (since v0.10.0)
+        - `OBJ:method(...)` calls method
+        - `OBJ:_get("PROPERTY")` returns the value of the property.
+        - `OBJ:_set("PROPERTY",value)` sets the value to the property.
+        - `OBJ:_iter()` returns an enumerator of the collection.
+        - `OBJ:_release()` releases the COM-instance.
+        - `local N=to_ole_integer(10)` creates the integer value for OLE.
 
 ``` lua
 local screen = assert(shot(25))
