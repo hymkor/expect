@@ -74,4 +74,17 @@ do
         end
         echo("--> [OK 2nd/2]")
     end
+
+    echo("*** OLE test ***")
+    do
+        local fsObj = create_object("Scripting.FileSystemObject")
+        local folder= fsObj:GetFolder("C:\\")
+        local files = folder:_get("Files")
+        if files:_get("Count") > 0 then
+            echo("--> [OK]")
+        else
+            echo("--> [NG]")
+            os.exit(1)
+        end
+    end
 end

@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/mattn/go-colorable"
+	"github.com/nyaosorg/glua-ole"
 	"github.com/yuin/gopher-lua"
 
 	"github.com/hymkor/expect/internal/filter"
@@ -155,6 +156,8 @@ func mains() error {
 	L.SetGlobal("shot", L.NewFunction(Shot))
 	L.SetGlobal("sleep", L.NewFunction(Sleep))
 	L.SetGlobal("usleep", L.NewFunction(USleep))
+	L.SetGlobal("create_object", L.NewFunction(ole.CreateObject))
+	L.SetGlobal("to_ole_integer", L.NewFunction(ole.ToOleInteger))
 
 	table := L.NewTable()
 	for i, s := range flag.Args() {
