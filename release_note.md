@@ -1,3 +1,7 @@
+v0.10.0
+-------
+Jan.03,2023
+
 - Add `create_object` and OLE functions.
 
 v0.9.0
