@@ -13,6 +13,7 @@ if not sshpid then
 end
 timeout = 10
 capturelines = 3 -- default is 2
+local promptkeyword = "$"
 
 while true do
     local rc = expect(
@@ -22,11 +23,22 @@ while true do
 
     if rc == 0 then
         sendln(password)
-        rc = expect("~]$","Permission denied, please try again")
+        sleep(1)
+        rc = expect(promptkeyword,"Permission denied, please try again")
         if rc == 0 then
+            sleep(1)
             sendln("exit")
+            sleep(1)
+            echo()
+            echo("-- This is the sample script")
+            echo("-- Write your code to do in your server instead of sendln(\"exit\")")
         else
-            kill(sshpid)
+            print()
+            echo(string.format(
+            "-- The expected prompt keyword(%s) was not found.",
+            promptkeyword))
+
+            -- kill(sshpid)
         end
         break
     elseif rc == 1 then
