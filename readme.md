@@ -92,6 +92,7 @@ if not sshpid then
 end
 timeout = 10
 capturelines = 3 -- default is 2
+local promptkeyword = "$"
 
 while true do
     local rc = expect(
@@ -101,11 +102,22 @@ while true do
 
     if rc == 0 then
         sendln(password)
-        rc = expect("~]$","Permission denied, please try again")
+        sleep(1)
+        rc = expect(promptkeyword,"Permission denied, please try again")
         if rc == 0 then
+            sleep(1)
             sendln("exit")
+            sleep(1)
+            echo()
+            echo("-- This is the sample script")
+            echo("-- Write your code to do in your server instead of sendln(\"exit\")")
         else
-            kill(sshpid)
+            print()
+            echo(string.format(
+            "-- The expected prompt keyword(%s) was not found.",
+            promptkeyword))
+
+            -- kill(sshpid)
         end
         break
     elseif rc == 1 then
@@ -128,7 +140,7 @@ On the command prompt:
 
 ```console
 $ .\expect sample.lua example@example.com PASSW0RD
-Expect-lua v0.8.0-6-g456fe3e-windows-amd64
+Expect-lua v0.10.0-3-ga2986b0-windows-amd64
 example@example.com's password:
 Last login: Mon Dec 26 23:18:11 2022 from XXXXXXXX-XXXXX.XXXX.XX.XXX.XXX.XXX.XX.XX
 FreeBSD 9.1-RELEASE-p24 (XXXXXXXX) #0: Thu Feb  5 10:03:29 JST 2015
@@ -138,7 +150,8 @@ Welcome to FreeBSD!
 [example@XXXXXXX ~]$ exit
 logout
 Connection to example.com closed.
-$
+-- This is the sample script
+-- Write your code to do in your server instead of sendln("exit")
 ```
 
 The script embedded in the batchfile:
