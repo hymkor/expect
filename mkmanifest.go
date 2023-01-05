@@ -320,6 +320,7 @@ func mains(args []string) error {
 		return err
 	}
 	os.Stdout.Write(output)
+	fmt.Println()
 	return nil
 }
 
