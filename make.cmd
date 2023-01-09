@@ -52,5 +52,5 @@
     exit /b
 
 :"manifest"
-    go run mkmanifest.go expect-v*.zip > expect-lua.json
+    make-scoop-manifest expect-v*.zip > expect-lua.json
     exit /b

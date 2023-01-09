@@ -16,10 +16,7 @@
     "bin": [
         "expect.exe"
     ],
-    "checkver": {
-        "github": "https://github.com/hymkor/expect",
-        "regex": "tag/([\\d\\._]+)"
-    },
+    "checkver": "github",
     "autoupdate": {
         "architecture": {
             "32bit": {
