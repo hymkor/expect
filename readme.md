@@ -65,10 +65,11 @@ Download the binary package from [Releases](https://github.com/hymkor/expect/rel
 scoop install https://raw.githubusercontent.com/hymkor/expect/master/expect-lua.json
 ```
 
-To update the version after installing :
+or
 
 ```
-scoop update expect-lua
+scoop bucket add hymkor https://github.com/hymkor/scoop-bucket
+scoop install expect-lua
 ```
 
 Sample
