@@ -174,3 +174,22 @@ if spawn([[c:\Program Files\Git\usr\bin\ssh.exe]],"foo@example.com") then
     send("exit\r")
 end
 ```
+
+FAQ
+---
+
+### `expect sample.lua > log` does not work.
+
+Expect.lua directly accesses the terminal device linked to STDOUT 
+or STDERR to retrieve the printed text.
+Therefore, if the STDOUT/STDERR is redirected to something other 
+than the terminal, the screen data of the terminal cannot be 
+accessed, resulting in an error.
+This is difficult to solve, and it is currently impossible to work
+with redirects.
+
+It was ideal that like "expect" on Linux, Expect.lua got the stdout
+and stderr of the child process via a pipeline,
+and then re-output them to the original destination after parsing .
+However, it is unavailable because on Windows the output is suppressed
+until CRLF is found when the destination is not the terminal and the expect function can never get a prompt without a newline.
