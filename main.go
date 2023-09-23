@@ -29,7 +29,6 @@ var (
 
 var (
 	eOption      = flag.String("e", "", "execute string")
-	xOption      = flag.Bool("x", false, "obsoluted option. Lines startings with '@' are always skipped.")
 	colorOption  = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
 	noLogoOption = flag.Bool("nologo", false, "do not show logo")
 )
