@@ -128,7 +128,7 @@ func mains() error {
 	}
 
 	if *eOption == "" && len(flag.Args()) < 1 {
-		return fmt.Errorf("Usage: %s xxxx.lua", os.Args[0])
+		return fmt.Errorf("usage: %s xxxx.lua", os.Args[0])
 	}
 
 	if *colorOption == "never" {
