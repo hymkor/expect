@@ -1,4 +1,5 @@
 - Add the new function: `sendvkey`
+- Fix the Go language version used for building to 1.20.14 for Windows 7,8,Server2008, and 2012R1/R2
 
 v0.10.0
 -------
