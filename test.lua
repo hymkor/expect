@@ -87,4 +87,16 @@ do
             os.exit(1)
         end
     end
+
+    echo("*** 'sendln(\"exit\")' to cmd.exe ***")
+    do
+        timeout = backup
+        local pid = spawn("cmd.exe")
+        if not pid then
+            os.exit(1)
+        end
+        sendln("exit")
+        wait(pid)
+        echo("--> [OK]")
+    end
 end
