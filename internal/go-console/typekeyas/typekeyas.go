@@ -29,3 +29,10 @@ func String(handle consoleinput.Handle, s string) {
 		Rune(handle, c)
 	}
 }
+
+func VirtualKey(handle consoleinput.Handle, v int) uint32 {
+	return SendKeyEvent(handle,
+		&consoleinput.KeyEventRecord{VirtualKeyCode: uint16(v), KeyDown: 1},
+		&consoleinput.KeyEventRecord{VirtualKeyCode: uint16(v)},
+	)
+}

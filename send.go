@@ -40,3 +40,13 @@ func Sendln(L *lua.LState) int {
 	L.Push(lua.LTrue)
 	return 1
 }
+
+func SendVKey(L *lua.LState) int {
+	n := L.GetTop()
+	for i := 1; i <= n; i++ {
+		if vkey, ok := L.Get(i).(lua.LNumber); ok {
+			typekeyas.VirtualKey(conIn, int(vkey))
+		}
+	}
+	return 0
+}

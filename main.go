@@ -147,6 +147,7 @@ func mains() error {
 	L.SetGlobal("echo", L.NewFunction(Echo))
 	L.SetGlobal("send", L.NewFunction(Send))
 	L.SetGlobal("sendln", L.NewFunction(Sendln))
+	L.SetGlobal("sendvkey", L.NewFunction(SendVKey))
 	L.SetGlobal("expect", L.NewFunction(Expect))
 	L.SetGlobal("spawn", L.NewFunction(Spawn))
 	L.SetGlobal("spawnctx", L.NewFunction(SpawnContext))
