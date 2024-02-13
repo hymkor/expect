@@ -1,3 +1,5 @@
+- Add the new function: `sendvkey`
+
 v0.10.0
 -------
 Jan.03,2023
