@@ -2,11 +2,12 @@ v0.11.0
 -------
 Feb.13,2024
 
-- ([#35]) Add the new function: `sendvkey(VIRTUAL_KEYCODE)`.
+- ([#35]) Add the new function: `sendvkey(VIRTUAL_KEYCODE)`. (Thanks to [@chrisdonlan])
     - It sends [a virtual key code](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 - Fix the Go language version used for building to 1.20.14 for Windows 7,8,Server2008, and 2012R1/R2
 
 [#35]: https://github.com/hymkor/expect/issues/35
+[@chrisdonlan]: https://github.com/chrisdonlan
 
 ### Example for sendvkey
 
@@ -49,7 +50,10 @@ v0.7.1
 ------
 Nov.29,2022
 
-- (#31) Fix: expect() crashed on timeout
+- ([#31]) Fix: expect() crashed on timeout (Thanks to [@horacehylee]
+
+[#31]: https://github.com/hymkor/expect/issues/31
+[@horacehylee]: https://github.com/horacehylee
 
 v0.7.0
 ------
@@ -59,7 +63,10 @@ Sep.25,2022
 - Failed to call console-api, show API-name as error
 - Add `-nologo` option
 - expect(): when the console of STDOUT can not be read, try STDERR.
-- (#30) expect(): Set matching information into the global variables: `_MATCHPOSITION` , `_MATCHLINE` , `_MATCH` , `_PREMATCH`, and `_POSTMATCH`.
+- ([#30]) expect(): Set matching information into the global variables: `_MATCHPOSITION` , `_MATCHLINE` , `_MATCH` , `_PREMATCH`, and `_POSTMATCH`. (Thanks to [@rdrdrdrd95])
+
+[@rdrdrdrd95]: https://github.com/rdrdrdrd95
+[#30]: https://github.com/hymkor/expect/issues/30
 
 v0.6.2
 ------
@@ -72,10 +79,14 @@ v0.6.1
 ------
 Feb.14,2022
 
-- For #23, fix that when a script did not end with CRLF, the last line was ignored.
+- For [#23], fix that when a script did not end with CRLF, the last line was ignored.
+( Thanks to [@wolf-li] )
 - Include the source code of go-console in the package.
 - readme.md and go.mod: change the URLs (Change username: zetamatta to hymkor)
 - Fix warning for golint that the function does not have the header comments.
+
+[#23]: https://github.com/hymkor/expect/issues/23
+[@wolf-li]: https://github.com/wolf-li
 
 v0.6.0
 ------
@@ -97,14 +108,20 @@ Apr.15,2021
 - Add a new function: kill(PROCESS-ID)
 - spawn() returns PROCESS-ID on success , or nil on failure. (It returned true or false before )
 - Remove import "io/ioutil" from the source file.
-- (#20) -color=nerver args and batch suport long lines with the caret (^) (Thanks to @a690700752 )
+- ([#20]) -color=nerver args and batch suport long lines with the caret (^) (Thanks to [@a690700752] )
+
+[#20]: https://github.com/hymkor/expect/issues/20
+[@a690700752]: https://github.com/a690700752
 
 v0.3.3
 ------
 Dec.20,2019
 
-- (#14) Fixed that wRepeatCount (the parameter for WriteConsoleInput) was not set 1 to send key-events.  
-By this bug, some console applications cound not recieve keys from expect.exe .
+- ([#14]) Fixed that wRepeatCount (the parameter for WriteConsoleInput) was not set 1 to send key-events.  
+By this bug, some console applications cound not recieve keys from expect.exe . ( Thanks to [@vctls] )
+
+[#14]: https://github.com/hymkor/expect/issues/14
+[@vctls]: https://github.com/vctls
 
 v0.3.2
 ------
@@ -122,21 +139,30 @@ v0.3.0
 ------
 Aug.08,2018
 
-- Add send() the second parameter as mili-second to wait per 1 character sent #6
+- Add send() the second parameter as mili-second to wait per 1 character sent [#6] \(Thanks to [@tangingw] \)
+
+[#6]: https://github.com/hymkor/expect/issues/6
+
 v0.2.0
 ------
 Aug.07,2018
 
-- #5, Implemented arg[] which are stored commandline arguments
-- #4, Skip ByteOrderMark (EF BB BF) from source Lua script
+- [#5], Implemented arg[] which are stored commandline arguments (Thanks to [@tangingw] )
+- [#4], Skip ByteOrderMark (EF BB BF) from source Lua script (Thanks to [@tangingw] )
 - Lines startings with '@' are always skipped without -x option,
+
+[#5]: https://github.com/hymkor/expect/issues/5
+[#4]: https://github.com/hymkor/expect/issues/4
+[@tangingw]: https://github.com/tangingw
 
 v0.1.1
 ------
 Sep.21,2017
 
-- Fix: runtime error: makeslice: len out of range #2
+- Fix: runtime error: makeslice: len out of range [#2]
 - Source file are not modified. You have to update your local source of go-getch to include the change hymkor/go-getch@a82c486
+
+[#2]: https://github.com/hymkor/expect/issues/2
 
 v0.1.0
 ------
