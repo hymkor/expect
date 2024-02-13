@@ -24,6 +24,7 @@ Expect-lua for Windows
             - `_POSTMATCH` - The string following matched.
     - `send(TEXT)` sends TEXT to the terminal as keyboard events.
         - `send(TEXT,MS)` waits MS [m-seconds] per 1-character (for plink.exe)
+    - `sendvkey(VIRTUAL_KEYCODE)` sends [a virtual key code](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
     - `sendln()` is same as send() but append CR.
     - `PID=spawn(NAME,ARG1,ARG2,...)` starts applications and
         - On success, `PID` is process-id(integer).
