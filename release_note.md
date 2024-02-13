@@ -1,3 +1,7 @@
+v0.11.0
+-------
+Feb.13,2024
+
 - Add the new function: `sendvkey(VIRTUAL_KEYCODE)`.
     - It sends [a virtual key code](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 - Fix the Go language version used for building to 1.20.14 for Windows 7,8,Server2008, and 2012R1/R2
