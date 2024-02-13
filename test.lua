@@ -99,4 +99,36 @@ do
         wait(pid)
         echo("--> [OK]")
     end
+
+    echo("*** 'send \"exot←←i<CR>\"' to cmd.exe ***")
+    do
+        timeout = backup
+        local pid = spawn("cmd.exe")
+        if not pid then
+            os.exit(1)
+        end
+        send("exot")
+        sleep(1)
+        sendvkey(0x25) -- VK_LEFT
+        sendvkey(0x25) -- VK_LEFT
+        sendln("i")
+        wait(pid)
+        echo("--> [OK]")
+    end
+
+    echo "*** '\"rem exit\" and sendvkey(HOME,DEL,DEL,DEL,DEL) ****"
+    local pid = spawn("cmd.exe")
+    if not pid then
+        os.exit(1)
+    end
+    send("rem exit")
+    sleep(1)
+    sendvkey(0x24) -- HOME
+    sendvkey(0x2E) -- DELETE
+    sendvkey(0x2E) -- DELETE
+    sendvkey(0x2E) -- DELETE
+    sendvkey(0x2E) -- DELETE
+    sendln("")
+    wait(pid)
+    echo("--> [OK]")
 end
