@@ -1,5 +1,24 @@
-- Add the new function: `sendvkey`
+- Add the new function: `sendvkey(VIRTUAL_KEYCODE)`.
+    - It sends [a virtual key code](https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 - Fix the Go language version used for building to 1.20.14 for Windows 7,8,Server2008, and 2012R1/R2
+
+### Example for sendvkey
+
+```lua
+local pid = spawn("cmd.exe")
+if not pid then
+    os.exit(1)
+end
+send("rem exit")
+sleep(1)
+sendvkey(0x24) -- HOME
+sendvkey(0x2E) -- DELETE
+sendvkey(0x2E) -- DELETE
+sendvkey(0x2E) -- DELETE
+sendvkey(0x2E) -- DELETE
+sendln("")
+wait(pid)
+```
 
 v0.10.0
 -------
