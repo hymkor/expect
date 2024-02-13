@@ -67,7 +67,7 @@ do
             os.exit(1)
         end
         echo("--> [OK 1st/2]")
-        usleep(1000000)
+        usleep(1001000)
         if not testShot("usleeptest") then
             echo("--> [NG 2nd/2]")
             os.exit(1)
