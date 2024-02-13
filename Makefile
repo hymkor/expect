@@ -20,7 +20,7 @@ all:
 
 test:
 	go test -v
-	$(NAME) test.lua
+	.\$(NAME) test.lua
 
 _dist:
 	$(SET) "CGO_ENABLED=0" && go build $(GOOPT)
