@@ -4,21 +4,24 @@ import (
 	"github.com/hymkor/expect/internal/go-console/input"
 )
 
-func Rune(handle consoleinput.Handle, c rune) uint32 {
-	records := []consoleinput.InputRecord{
-		consoleinput.InputRecord{EventType: consoleinput.KEY_EVENT},
-		consoleinput.InputRecord{EventType: consoleinput.KEY_EVENT},
+func SendKeyEvent(handle consoleinput.Handle, events ...*consoleinput.KeyEventRecord) uint32 {
+	records := make([]consoleinput.InputRecord, len(events))
+	for i, e := range events {
+		records[i].EventType = consoleinput.KEY_EVENT
+		keyEvent := records[i].KeyEvent()
+		*keyEvent = *e
+		if keyEvent.RepeatCount <= 0 {
+			keyEvent.RepeatCount = 1
+		}
 	}
-	keydown := records[0].KeyEvent()
-	keydown.KeyDown = 1
-	keydown.RepeatCount = 1
-	keydown.UnicodeChar = uint16(c)
-
-	keyup := records[1].KeyEvent()
-	keyup.RepeatCount = 1
-	keyup.UnicodeChar = uint16(c)
-
 	return handle.Write(records[:])
+}
+
+func Rune(handle consoleinput.Handle, c rune) uint32 {
+	return SendKeyEvent(handle,
+		&consoleinput.KeyEventRecord{UnicodeChar: uint16(c), KeyDown: 1},
+		&consoleinput.KeyEventRecord{UnicodeChar: uint16(c)},
+	)
 }
 
 func String(handle consoleinput.Handle, s string) {
