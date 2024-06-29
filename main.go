@@ -28,9 +28,11 @@ var (
 )
 
 var (
-	eOption      = flag.String("e", "", "execute string")
-	colorOption  = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
-	noLogoOption = flag.Bool("nologo", false, "do not show logo")
+	eOption         = flag.String("e", "", "execute string")
+	colorOption     = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
+	noLogoOption    = flag.Bool("nologo", false, "do not show logo")
+	compileOption   = flag.String("compile", "", "make all-in-one binary (`expect.exe -compile NEW-BINARY-FILENAME SCRIPT-FILENAME`)")
+	testEmbedOption = flag.Bool("printembederror", false, "print errors of embed")
 )
 
 var conIn consoleinput.Handle
@@ -127,10 +129,6 @@ func mains() error {
 			version, runtime.GOARCH, runtime.Version())
 	}
 
-	if *eOption == "" && len(flag.Args()) < 1 {
-		return fmt.Errorf("usage: %s xxxx.lua", os.Args[0])
-	}
-
 	if *colorOption == "never" {
 		escEcho = ""
 		escSend = ""
@@ -170,12 +168,24 @@ func mains() error {
 	defer stop()
 	L.SetContext(ctx)
 
+	defer waitGroup.Wait()
+
 	if *eOption != "" {
 		err = L.DoString(*eOption)
+	} else if len(flag.Args()) >= 1 {
+		if *compileOption != "" {
+			err = compile(*compileOption, os.Args[0], flag.Arg(0))
+		} else {
+			err = DoFileExceptForAtmarkLines(L, flag.Arg(0))
+		}
+	} else if script, err := readEmbedScript(os.Args[0]); err == nil {
+		err = L.DoString(script)
 	} else {
-		err = DoFileExceptForAtmarkLines(L, flag.Arg(0))
+		if err != nil && *testEmbedOption {
+			fmt.Println(err.Error())
+		}
+		return fmt.Errorf("usage: %s xxxx.lua", os.Args[0])
 	}
-	waitGroup.Wait()
 	return err
 }
 
