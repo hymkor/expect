@@ -1,3 +1,20 @@
+- ([#36]) Add the new option `-compile` to embed a script to the executable file (Thanks to [@misha-franz])
+
+```
+C:> type embed.lua
+print("embed sample !")
+
+C:> expect.exe -compile embed.exe embed.lua
+Expect-lua v0.11.0-4-g8ac7fce-windows-amd64 by go1.20.14
+
+C:> embed.exe
+Expect-lua v0.11.0-4-g8ac7fce-windows-amd64 by go1.20.14
+embed sample !
+```
+
+[#36]: https://github.com/hymkor/expect/issues/36
+[@misha-franz]: https://github.com/misha-franz
+
 v0.11.0
 -------
 Feb.13,2024
