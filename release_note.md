@@ -1,3 +1,7 @@
+v0.12.0
+=======
+Jul.1,2024
+
 - ([#36]) Add the new option `-compile` to embed a script to the executable file (Thanks to [@misha-franz])
 
 ```
