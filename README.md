@@ -60,7 +60,13 @@ Install
 
 Download the binary package from [Releases](https://github.com/hymkor/expect/releases) and extract the executable.
 
-### for scoop-installer
+### via go install
+
+```
+go install github.com/hymkor/expect@latest
+```
+
+### via scoop-installer
 
 ```
 scoop install https://raw.githubusercontent.com/hymkor/expect/master/expect-lua.json
