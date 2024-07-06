@@ -31,7 +31,7 @@ var (
 	eOption         = flag.String("e", "", "execute string")
 	colorOption     = flag.String("color", "always", "colorize the output; can be 'always' (default if omitted), 'auto', or 'never'.")
 	noLogoOption    = flag.Bool("nologo", false, "do not show logo")
-	compileOption   = flag.String("compile", "", "make all-in-one binary (`expect.exe -compile NEW-BINARY-FILENAME SCRIPT-FILENAME`)")
+	compileOption   = flag.String("compile", "", "make `new-executable` including a script. This does not execute the script immediately")
 	testEmbedOption = flag.Bool("printembederror", false, "print errors of embed")
 )
 
