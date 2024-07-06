@@ -32,7 +32,7 @@ var (
 	colorOption     = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
 	noLogoOption    = flag.Bool("nologo", false, "do not show logo")
 	compileOption   = flag.String("compile", "", "make `new-executable` including a script. This does not execute the script immediately")
-	testEmbedOption = flag.Bool("printembederror", false, "print errors of embed")
+	testEmbedOption = flag.Bool("printembederror", false, "debug option. print errors of embed")
 )
 
 var conIn consoleinput.Handle
