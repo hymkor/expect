@@ -184,7 +184,8 @@ func mains() error {
 		if err != nil && *testEmbedOption {
 			fmt.Println(err.Error())
 		}
-		return fmt.Errorf("usage: %s xxxx.lua", os.Args[0])
+		flag.Usage()
+		return nil
 	}
 	return err
 }
