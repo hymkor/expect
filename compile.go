@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -56,6 +57,9 @@ func readEmbedScript(fname string) (string, error) {
 }
 
 func compile(newExeName, exeName, scriptName string) error {
+	if len(newExeName) < 4 || !strings.EqualFold(newExeName[len(newExeName)-4:], ".exe") {
+		newExeName = fmt.Sprintf("%s.exe", newExeName)
+	}
 	_w, err := os.Create(newExeName)
 	if err != nil {
 		return err
