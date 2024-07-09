@@ -28,10 +28,10 @@ var (
 )
 
 var (
-	eOption         = flag.String("e", "", "execute `code`")
 	colorOption     = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
 	flagCompile     = flag.String("compile", "", "compile as `executable-name` with <script>.lua embedded; script is not executed")
 	flagDebug   = flag.Bool("D", false, "print debug information")
+	flagOneLineScript = flag.String("e", "", "execute `code`")
 )
 
 var conIn consoleinput.Handle
@@ -171,8 +171,8 @@ func mains() error {
 
 	defer waitGroup.Wait()
 
-	if *eOption != "" {
-		err = L.DoString(*eOption)
+	if *flagOneLineScript != "" {
+		err = L.DoString(*flagOneLineScript)
 	} else if len(flag.Args()) >= 1 {
 		if *flagCompile != "" {
 			err = compile(*flagCompile, os.Args[0], flag.Arg(0))
