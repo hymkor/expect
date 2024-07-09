@@ -9,7 +9,6 @@ import (
 	"io"
 	"os"
 	"os/signal"
-	"runtime"
 	"time"
 
 	"github.com/mattn/go-colorable"
@@ -28,10 +27,11 @@ var (
 )
 
 var (
-	flagOneLineScript = flag.String("e", "", "execute `code`")
-	flagColor         = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
-	flagCompile       = flag.String("compile", "", "compile as `executable-name` with <script>.lua embedded; script is not executed")
+	flagOneLineScript = flag.String("e", "", "code\vexecute code")
+	flagColor         = flag.String("color", "always", "[always|never] (default: always)\vcolorize the output")
+	flagCompile       = flag.String("compile", "", "executable-name\vcompile executable with <script>.lua embedded; script is not executed")
 	flagDebug         = flag.Bool("D", false, "print debug information")
+	_                 = flag.Bool("nologo", false, "")
 )
 
 var conIn consoleinput.Handle
@@ -121,13 +121,7 @@ func mains() error {
 	if closer := colorable.EnableColorsStdout(nil); closer != nil {
 		defer closer()
 	}
-	flag.Usage = func() {
-		w := flag.CommandLine.Output()
-		fmt.Fprintf(w, "Expect-lua %s-windows-%s with %s\n",
-			version, runtime.GOARCH, runtime.Version())
-		fmt.Fprintf(w, "Usage of %s:\n", os.Args[0])
-		flag.PrintDefaults()
-	}
+	flag.Usage = newUsage
 	flag.Parse()
 
 	if *flagColor == "never" {
