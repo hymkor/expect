@@ -28,10 +28,10 @@ var (
 )
 
 var (
-	colorOption     = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
 	flagCompile     = flag.String("compile", "", "compile as `executable-name` with <script>.lua embedded; script is not executed")
 	flagDebug   = flag.Bool("D", false, "print debug information")
 	flagOneLineScript = flag.String("e", "", "execute `code`")
+	flagColor         = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
 )
 
 var conIn consoleinput.Handle
@@ -130,7 +130,7 @@ func mains() error {
 	}
 	flag.Parse()
 
-	if *colorOption == "never" {
+	if *flagColor == "never" {
 		escEcho = ""
 		escSend = ""
 		escSpawn = ""
