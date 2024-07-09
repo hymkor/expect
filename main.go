@@ -30,7 +30,6 @@ var (
 var (
 	eOption         = flag.String("e", "", "execute `code`")
 	colorOption     = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
-	noLogoOption    = flag.Bool("nologo", false, "do not show logo")
 	compileOption   = flag.String("compile", "", "make `new-executable` including a script. This does not execute the script immediately")
 	testEmbedOption = flag.Bool("printembederror", false, "debug option. print errors of embed")
 )
@@ -122,12 +121,14 @@ func mains() error {
 	if closer := colorable.EnableColorsStdout(nil); closer != nil {
 		defer closer()
 	}
-	flag.Parse()
-
-	if !*noLogoOption {
-		fmt.Fprintf(os.Stderr, "Expect-lua %s-windows-%s by %s\n",
+	flag.Usage = func() {
+		w := flag.CommandLine.Output()
+		fmt.Fprintf(w, "Expect-lua %s-windows-%s with %s\n",
 			version, runtime.GOARCH, runtime.Version())
+		fmt.Fprintf(w, "Usage of %s:\n", os.Args[0])
+		flag.PrintDefaults()
 	}
+	flag.Parse()
 
 	if *colorOption == "never" {
 		escEcho = ""
