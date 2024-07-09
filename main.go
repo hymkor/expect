@@ -31,7 +31,7 @@ var (
 	eOption         = flag.String("e", "", "execute `code`")
 	colorOption     = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
 	flagCompile     = flag.String("compile", "", "compile as `executable-name` with <script>.lua embedded; script is not executed")
-	testEmbedOption = flag.Bool("printembederror", false, "debug option. print errors of embed")
+	flagDebug   = flag.Bool("D", false, "print debug information")
 )
 
 var conIn consoleinput.Handle
@@ -182,7 +182,7 @@ func mains() error {
 	} else if script, err := readEmbedScript(os.Args[0]); err == nil {
 		err = L.DoString(script)
 	} else {
-		if err != nil && *testEmbedOption {
+		if err != nil && *flagDebug {
 			fmt.Println(err.Error())
 		}
 		flag.Usage()
