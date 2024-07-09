@@ -30,7 +30,7 @@ var (
 var (
 	eOption         = flag.String("e", "", "execute `code`")
 	colorOption     = flag.String("color", "always", "colorize the output; 'always', 'auto', or 'never'")
-	compileOption   = flag.String("compile", "", "make `new-executable` including a script. This does not execute the script immediately")
+	flagCompile     = flag.String("compile", "", "compile as `executable-name` with <script>.lua embedded; script is not executed")
 	testEmbedOption = flag.Bool("printembederror", false, "debug option. print errors of embed")
 )
 
@@ -174,8 +174,8 @@ func mains() error {
 	if *eOption != "" {
 		err = L.DoString(*eOption)
 	} else if len(flag.Args()) >= 1 {
-		if *compileOption != "" {
-			err = compile(*compileOption, os.Args[0], flag.Arg(0))
+		if *flagCompile != "" {
+			err = compile(*flagCompile, os.Args[0], flag.Arg(0))
 		} else {
 			err = DoFileExceptForAtmarkLines(L, flag.Arg(0))
 		}
