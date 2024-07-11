@@ -1,3 +1,7 @@
+v0.12.1
+=======
+Jul.11,2024
+
 - Print logo only when no arguments are given and hide the option `-nologo`
 - Rename `-printembederror` to `-D` for debug-print
 - Modify the description of the usage of `-compile`
