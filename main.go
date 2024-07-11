@@ -28,7 +28,8 @@ var (
 
 var (
 	flagOneLineScript = flag.String("e", "", "code\vexecute code")
-	flagColor         = flag.String("color", "always", "[always|never] (default: always)\vcolorize the output")
+	flagColor         = flag.String("color", "always", "")
+	flagNoColor       = flag.Bool("nocolor", false, "disable color")
 	flagCompile       = flag.String("compile", "", "executable-name\vcompile executable with <script>.lua embedded; script is not executed")
 	flagDebug         = flag.Bool("D", false, "print debug information")
 	_                 = flag.Bool("nologo", false, "")
@@ -124,7 +125,7 @@ func mains() error {
 	flag.Usage = newUsage
 	flag.Parse()
 
-	if *flagColor == "never" {
+	if *flagColor == "never" || *flagNoColor {
 		escEcho = ""
 		escSend = ""
 		escSpawn = ""
