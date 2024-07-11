@@ -1,3 +1,8 @@
+- Print logo only when no arguments are given and hide the option `-nologo`
+- Rename `-printembederror` to `-D` for debug-print
+- Modify the description of the usage of `-compile`
+- Add `-nocolor` as boolean option and hide `-color` option from usages, because `-color auto` was same as `-color always` and does not need to be string-option
+
 v0.12.0
 =======
 Jul.1,2024
