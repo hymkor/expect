@@ -100,7 +100,7 @@ do
         echo("--> [OK]")
     end
 
-    echo("*** 'send \"exot←←i<CR>\"' to cmd.exe ***")
+    echo("*** 'send \"exot←←<DEL>i<CR>\"' to cmd.exe ***")
     do
         timeout = backup
         local pid = spawn("cmd.exe")
@@ -111,6 +111,7 @@ do
         sleep(1)
         sendvkey(0x25) -- VK_LEFT
         sendvkey(0x25) -- VK_LEFT
+        sendvkey(0x2E) -- DELETE
         sendln("i")
         wait(pid)
         echo("--> [OK]")
