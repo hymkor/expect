@@ -1,3 +1,6 @@
+- Update linked libraries with `go get -u`
+- Fix: broken test.lua
+
 v0.12.1
 =======
 Jul.11,2024
