@@ -200,3 +200,7 @@ and stderr of the child process via a pipeline,
 and then re-output them to the original destination after parsing .
 However, it is unavailable because on Windows the output is suppressed
 until CRLF is found when the destination is not the terminal and the expect function can never get a prompt without a newline.
+
+---
+
+Looking for a new option? Check out [Lispect](https://github.com/hymkor/lispect)
