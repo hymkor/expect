@@ -1,5 +1,3 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/hymkor/expect)](https://goreportcard.com/report/github.com/hymkor/expect)
-
 Expect-lua for Windows
 ======================
 
